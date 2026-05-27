@@ -3,5 +3,6 @@
 __pycache__/
 *.pyc
 runs/
+eval/results/
 .DS_Store
 *.egg-info/
