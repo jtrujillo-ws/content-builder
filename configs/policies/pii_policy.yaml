@@ -1,0 +1,83 @@
+# PII Policy — Davivienda WhatsApp Content Builder
+# Fuente de verdad declarativa. La implementación vive en src/tools/tool_contract.py::check_pii.
+version: v1
+description: >
+  Política de detección y enmascaramiento de información personalmente identificable
+  (PII) en interacciones de WhatsApp Davivienda y artículos de KB derivados. Aplica
+  a todos los frameworks (LangGraph, CrewAI, OpenAI Agents SDK) por igual.
+
+# Estrategia: detectar PII en el contenido procesado (NUNCA dejar PII en artículos KB).
+# Las interacciones originales pueden contener PII; el sistema enmascara al exponerlas.
+strategy:
+  on_interaction_read: mask        # get_interaction enmascara customer_profile.name
+  on_article_validate: error       # validate_article devuelve is_valid=false si hay PII
+  on_article_publish: block        # gobernanza no puede aprobar artículos con PII
+
+# Orden de detección: longitudes mayores primero para evitar doble-flagging.
+detection_priority:
+  - email
+  - tarjeta
+  - celular
+  - cedula
+
+patterns:
+  email:
+    regex: '\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b'
+    description: Correo electrónico (formato RFC 5322 relajado)
+    mask: "<first_char>***@<domain>"
+    example_raw: "juan.perez@gmail.com"
+    example_masked: "j***@gmail.com"
+
+  tarjeta:
+    regex: '\b(?:\d[ \-]?){13,19}\b'
+    description: Número de tarjeta (13-19 dígitos, separadores opcionales con espacio o guion)
+    digits_only_range: [13, 19]
+    mask: "<first_2><asterisks><last_2>"
+    example_raw: "4111 1111 1111 1111"
+    example_masked: "41************11"
+
+  celular:
+    regex: '(?<!\d)3\d{9}(?!\d)'
+    description: Celular colombiano (10 dígitos, comienza por 3)
+    country_code: CO
+    mask: "<first_2><asterisks><last_2>"
+    example_raw: "3001234567"
+    example_masked: "30******67"
+
+  cedula:
+    regex: '(?<!\d)\d{8,12}(?!\d)'
+    description: Cédula de ciudadanía colombiana (8 a 12 dígitos)
+    digits_range: [8, 12]
+    mask: "<first_2><asterisks><last_2>"
+    example_raw: "1023456789"
+    example_masked: "10******89"
+    notes: >
+      Se aplica DESPUÉS de email/tarjeta/celular para evitar doble flagging cuando
+      una secuencia de dígitos también encaja con celular.
+
+# Patrones que NO deben flagearse aunque parezcan PII.
+exclusions:
+  years:
+    values: [2024, 2025]
+    rationale: Año calendario en metadatos, no es PII.
+  interaction_id:
+    regex: '\bINT-\d{4}-\d{3}\b'
+    rationale: Identificadores sintéticos del dataset, no son PII.
+
+# Campos del artículo KB sobre los que se ejecuta el escaneo.
+scan_article_fields:
+  - title
+  - problem
+  - cause
+  - resolution            # admite str o List[str]; cada item se inspecciona
+  - evidence_pack.key_fragments
+
+# Campos de la interacción que el sistema enmascara al leer.
+masked_interaction_fields:
+  - customer_profile.name           # "Luis Restrepo" -> "L***"
+
+# Acción cuando se detecta PII en un artículo en validate_article.
+on_detection:
+  severity: error
+  blocking: true
+  log_to_run_artifacts: true        # se persiste en runs/<id>/pii_findings.jsonl

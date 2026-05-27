@@ -1,0 +1,104 @@
+# Governance Policy — Davivienda KB Content Builder
+# Máquina de estados del artículo y reglas de human-in-the-loop (HITL).
+version: v1
+description: >
+  Ciclo de vida de un artículo de KB generado por los agentes. La aprobación final
+  SIEMPRE requiere revisión humana — los agentes nunca publican autónomamente. Esta
+  política aplica idéntica a los 3 frameworks bajo evaluación.
+
+# Estados posibles.
+states:
+  draft:
+    description: Borrador inicial producido por el agente generator. Aún no inspeccionado.
+    is_initial: true
+    is_terminal: false
+  in_review:
+    description: Artículo validado estructuralmente, sin PII, listo para revisión humana.
+    is_initial: false
+    is_terminal: false
+  approved:
+    description: Artículo aprobado por un revisor humano. Apto para publicar en la KB.
+    is_initial: false
+    is_terminal: true
+  rejected:
+    description: Artículo descartado por un revisor humano con feedback.
+    is_initial: false
+    is_terminal: true
+
+initial_state: draft
+terminal_states: [approved, rejected]
+
+# Transiciones permitidas. requires_human=true es BLOQUEANTE — un agente no puede dispararla.
+transitions:
+  - id: submit_for_review
+    from: draft
+    to: in_review
+    trigger: agent.submit
+    requires_human: false
+    preconditions:
+      - name: structural_validation_ok
+        check: validate_article.is_valid == true
+        description: validate_article debe retornar is_valid=true
+      - name: no_pii_findings
+        check: validate_article.pii_findings == []
+        description: Cero hallazgos de PII en cualquier campo del artículo
+      - name: evidence_pack_complete
+        check: |
+          len(article.evidence_pack.interaction_ids) >= 1 AND
+          len(article.evidence_pack.key_fragments) >= 1 AND
+          len(article.evidence_pack.claim_evidence_map) >= 1
+        description: El evidence pack debe estar poblado con al menos una fuente y un claim mapeado
+      - name: critic_score_threshold
+        check: critic.scores.exactitud >= 4 AND critic.scores.consistencia >= 4
+        description: La crítica automática debe puntuar exactitud y consistencia ≥ 4/5
+
+  - id: human_approve
+    from: in_review
+    to: approved
+    trigger: human.approve
+    requires_human: true
+    actor_role: kb_reviewer
+    description: Solo un revisor humano (rol kb_reviewer) puede aprobar.
+
+  - id: human_reject
+    from: in_review
+    to: rejected
+    trigger: human.reject
+    requires_human: true
+    actor_role: kb_reviewer
+    description: Revisor humano descarta el artículo con feedback obligatorio.
+    required_payload:
+      - rejection_reason
+      - feedback_text
+
+  - id: rework
+    from: rejected
+    to: draft
+    trigger: agent.rework
+    requires_human: false
+    description: >
+      Bucle de re-trabajo opcional cuando el revisor solicita correcciones. El agente
+      generator usa el feedback_text del rechazo como contexto adicional.
+
+# SLAs informativos (no bloqueantes, sólo telemetría).
+sla:
+  in_review_max_hours: 48
+  draft_to_in_review_max_seconds: 300        # alineado con budget.timeout_seconds
+
+# Auditoría — qué se persiste por transición.
+audit:
+  log_path: runs/<run_id>/governance.jsonl
+  fields:
+    - timestamp
+    - run_id
+    - article_id
+    - from_state
+    - to_state
+    - transition_id
+    - actor                      # "agent:<framework>" o "human:<user_id>"
+    - payload                    # feedback, rejection_reason, etc.
+
+# Política de errores: cualquier intento de transición ilegal aborta el run.
+on_invalid_transition:
+  action: abort_run
+  log_level: error

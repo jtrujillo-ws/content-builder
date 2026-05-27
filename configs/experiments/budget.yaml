@@ -1,0 +1,63 @@
+# Experiment Budget — Davivienda KB Content Builder
+# Parámetros de control aplicados idénticamente a los 3 frameworks bajo evaluación.
+# La única variable independiente del experimento es el framework de orquestación.
+version: v1
+description: >
+  Presupuestos y parámetros del modelo para cada ejecución de agente. Estos valores
+  son fijos durante toda la batería experimental — modificarlos invalida la
+  comparabilidad entre LangGraph, CrewAI y OpenAI Agents SDK.
+
+# Presupuesto por run (1 run = 1 framework procesando 1 split).
+budget:
+  max_tool_calls: 50               # corte duro sobre el agregado de tool invocations
+  timeout_seconds: 300             # 5 minutos de wall-clock por run
+  max_cost_usd: 2.00               # corte duro sobre costo estimado vía pricing del modelo
+
+  on_exceeded:
+    action: abort_run
+    persist_partial: true          # se guarda el estado parcial en runs/<id>/aborted.json
+    mark_status: aborted
+
+# Modelo LLM — variable de control (mismo para los 3 frameworks).
+model:
+  provider: anthropic
+  name: claude-sonnet-4-20250514
+  temperature: 0.3
+  max_tokens: 4096
+  top_p: 1.0
+  stop_sequences: []
+  # Caching de prompts: habilitado para reducir costo en ejecuciones repetidas.
+  prompt_caching:
+    enabled: true
+    cache_system_prompts: true
+
+# Repeticiones experimentales.
+repetitions:
+  main: 3                          # estudio principal: 3 corridas por framework × split eval
+  ablation: 3                      # estudios de ablación: 3 corridas por condición
+
+# Semillas — para reproducibilidad parcial (el LLM sigue siendo no-determinístico).
+seeds:
+  numpy: 42
+  python_random: 42
+  framework_specific_overrides: {}
+
+# Telemetría obligatoria por run.
+telemetry:
+  capture:
+    - tool_calls                   # nombre, args, latencia, resultado resumido
+    - token_usage                  # input, output, cache_creation, cache_read
+    - cost_usd_estimated
+    - state_transitions            # de governance_policy.yaml
+    - errors_and_retries
+    - wall_clock_seconds
+  artifacts_path: runs/<run_id>/
+
+# Pricing usado para el cálculo de cost_usd_estimated (USD por millón de tokens).
+# Actualizar si Anthropic cambia precios — fuente: https://www.anthropic.com/pricing
+pricing:
+  claude-sonnet-4-20250514:
+    input_per_mtok: 3.00
+    output_per_mtok: 15.00
+    cache_write_per_mtok: 3.75
+    cache_read_per_mtok: 0.30
