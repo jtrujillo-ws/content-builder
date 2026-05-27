@@ -27,7 +27,8 @@ Claude (Anthropic) — claude-sonnet-4-20250514. Mismo modelo para los 3 framewo
 Todo artículo: title, environment, problem, cause, resolution, evidence_pack, metadata
 
 ## Restricciones técnicas
-- Python 3.9 (no usar X | Y, usar Optional[X])
+- Python 3.11 (migrado desde 3.9 porque crewai moderno requiere ≥ 3.10).
+  Mantener convención `Optional[X]` / `List[X]` por consistencia.
 - API key en .env (ANTHROPIC_API_KEY)
 - Presupuesto: timeout 300s, máx 50 tool calls, máx $2 USD por ejecución
 - Temperature: 0.3, max_tokens: 4096
