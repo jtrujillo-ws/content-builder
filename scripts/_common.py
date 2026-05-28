@@ -16,9 +16,11 @@ import json
 import logging
 import multiprocessing as mp
 import os
+import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -328,34 +330,50 @@ def run_in_batches(
         )
         t0 = time.time()
         proc.start()
-        proc.join(hard_deadline)
+
+        # Watchdog: garantiza terminación incluso si `proc.join(timeout)` no
+        # respeta el timeout (observado en producción con runners que hacen
+        # I/O bloqueante intenso vía httpx/anthropic SDK). El timer corre en
+        # un hilo daemon del padre, dispara `os.kill(SIGKILL)` al deadline,
+        # y NO depende del scheduling del select() interno de mp.connection.
+        timeout_flag = threading.Event()
+        proc_pid = proc.pid
+
+        def _watchdog_kill() -> None:
+            try:
+                os.kill(proc_pid, 0)  # ¿sigue vivo?
+            except ProcessLookupError:
+                return
+            timeout_flag.set()
+            log.error(
+                "Lote %d: WATCHDOG TIMEOUT (%.0fs) — SIGKILL al PID %s",
+                b_idx,
+                hard_deadline,
+                proc_pid,
+            )
+            try:
+                os.kill(proc_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+
+        watchdog = threading.Timer(hard_deadline, _watchdog_kill)
+        watchdog.daemon = True
+        watchdog.start()
+        try:
+            # join sin timeout — el watchdog garantiza terminación.
+            proc.join()
+        finally:
+            watchdog.cancel()
         elapsed = round(time.time() - t0, 3)
 
-        if proc.is_alive():
-            log.error(
-                "Lote %d: HARD TIMEOUT tras %.1fs (límite %.0fs). "
-                "Matando subproceso PID %s.",
-                b_idx,
-                elapsed,
-                hard_deadline,
-                proc.pid,
-            )
-            proc.terminate()
-            proc.join(5)
-            if proc.is_alive():
-                log.error(
-                    "Lote %d: SIGTERM ignorado tras 5s, enviando SIGKILL.", b_idx
-                )
-                proc.kill()
-                proc.join()
-            elapsed = round(time.time() - t0, 3)
+        if timeout_flag.is_set():
             agg_errors.append(
                 {
                     "phase": "batch_runner",
                     "batch_idx": b_idx,
                     "batch_ids": batch_ids,
                     "error": (
-                        f"hard_timeout: subproceso matado tras {elapsed:.1f}s "
+                        f"hard_timeout: SIGKILL por watchdog tras {elapsed:.1f}s "
                         f"(límite {hard_deadline:.0f}s)"
                     ),
                     "elapsed_seconds": elapsed,
