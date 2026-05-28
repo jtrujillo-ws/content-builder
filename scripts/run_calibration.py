@@ -76,9 +76,11 @@ def main(argv=None) -> int:
     )
     parser.add_argument(
         "--limit",
+        "--max-interactions",
+        dest="limit",
         type=int,
         default=None,
-        help="Limita el número de interacciones (útil para humo rápido).",
+        help="Limita el número de interacciones (toma los primeros N IDs del split).",
     )
     parser.add_argument(
         "--out-dir",
