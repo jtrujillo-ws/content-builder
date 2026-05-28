@@ -4,13 +4,13 @@
 -------------------------------------------------
 El OpenAI Agents SDK (paquete `openai-agents`) está diseñado para modelos
 OpenAI por defecto. Para mantener la variable de control del experimento
-(Claude `claude-sonnet-4-6-20250514` igual para los 3 frameworks) se evaluaron
+(Claude `claude-sonnet-4-6` igual para los 3 frameworks) se evaluaron
 tres caminos:
 
 1. **Adapter LiteLLM oficial del SDK** — `agents.extensions.models.litellm_model.LitellmModel`,
    que enchufa cualquier proveedor soportado por LiteLLM (Anthropic, Gemini,
    Bedrock, etc.) al runtime del SDK. **Esta es la opción adoptada**: usamos
-   `LitellmModel(model="anthropic/claude-sonnet-4-6-20250514")` como `model`
+   `LitellmModel(model="anthropic/claude-sonnet-4-6")` como `model`
    de cada `Agent`. Conserva la maquinaria nativa del SDK (function tools,
    tracing, guardrails, handoffs) y permite la comparación directa con los
    prototipos de LangGraph y CrewAI sin re-implementar el paradigma.
