@@ -37,7 +37,6 @@ from scripts._common import (  # noqa: E402
     FRAMEWORK_CHOICES,
     PROJECT_ROOT,
     config_hash,
-    dispatch_runner,
     git_info,
     load_model_name,
     load_splits,
@@ -104,8 +103,6 @@ def main(argv=None) -> int:
         log.error("No hay IDs de calibración en splits.yaml")
         return 2
 
-    # ---- runner dispatch ----
-    runner = dispatch_runner(args.framework)
     log.info(
         "Framework: %s | auto_approve=%s | batch_size=%d | tope_total=$%.2f",
         args.framework,
@@ -140,7 +137,7 @@ def main(argv=None) -> int:
     t0 = time.time()
     try:
         result = run_in_batches(
-            runner,
+            args.framework,
             ids,
             batch_size=args.batch_size,
             auto_approve=args.auto_approve,

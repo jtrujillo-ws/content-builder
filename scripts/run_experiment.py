@@ -43,7 +43,6 @@ from scripts._common import (  # noqa: E402
     FRAMEWORK_CHOICES,
     PROJECT_ROOT,
     config_hash,
-    dispatch_runner,
     git_info,
     load_model_name,
     load_splits,
@@ -139,8 +138,6 @@ def main(argv=None) -> int:
                 args.ablation,
             )
 
-    runner = dispatch_runner(args.framework)
-
     # Carpeta base
     base_dir = PROJECT_ROOT / "runs" / "experiment" / args.framework
     if args.ablation:
@@ -183,7 +180,7 @@ def main(argv=None) -> int:
         t0 = time.time()
         try:
             result = run_in_batches(
-                runner,
+                args.framework,
                 ids,
                 batch_size=effective_batch_size,
                 auto_approve=args.auto_approve,

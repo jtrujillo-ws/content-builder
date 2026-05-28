@@ -11,7 +11,7 @@ description: >
 # Con la estrategia de batching (`--batch-size N`), cada lote se procesa en una
 # llamada independiente al runner y usa este presupuesto íntegro.
 budget:
-  max_tool_calls: 50               # corte duro sobre el agregado de tool invocations
+  max_tool_calls: 150              # corte duro sobre el agregado de tool invocations
   timeout_seconds: 600             # 10 minutos de wall-clock por lote
   max_cost_usd: 2.00               # corte duro sobre costo estimado vía pricing del modelo
 

@@ -14,9 +14,11 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import multiprocessing as mp
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -149,21 +151,88 @@ def _chunks(items: List[Any], size: int) -> List[List[Any]]:
     return [items[i : i + size] for i in range(0, len(items), size)]
 
 
+HARD_TIMEOUT_GRACE_SECONDS = 30.0
+
+
+def _runner_subprocess_entry(
+    framework_name: str,
+    batch_ids: List[str],
+    auto_approve: bool,
+    result_path: str,
+) -> None:
+    """Punto de entrada que corre en un subproceso aislado (mp.spawn).
+
+    Despacha al runner del framework y persiste el resultado (o el error) en
+    `result_path` como JSON. Debe ser top-level y picklable.
+    """
+    import traceback as _tb
+
+    project_root = str(Path(__file__).resolve().parents[1])
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
+
+    try:
+        from scripts._common import dispatch_runner as _dispatch
+
+        runner = _dispatch(framework_name)
+        result = runner(batch_ids, auto_approve=auto_approve)
+        payload = {"status": "ok", "result": result}
+    except BaseException as e:  # noqa: BLE001 — incluye SystemExit/KeyboardInterrupt
+        payload = {
+            "status": "error",
+            "error": f"{type(e).__name__}: {e}",
+            "traceback": _tb.format_exc(),
+        }
+
+    tmp_path = f"{result_path}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, default=str)
+        os.replace(tmp_path, result_path)
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _empty_batch_record(
+    b_idx: int, batch_ids: List[str], status: str, elapsed: float
+) -> Dict[str, Any]:
+    return {
+        "batch_idx": b_idx,
+        "batch_ids": batch_ids,
+        "status": status,
+        "elapsed_seconds": elapsed,
+        "articles_generated": 0,
+        "errors": 1,
+        "cost_usd": 0.0,
+        "tokens_in": 0,
+        "tokens_out": 0,
+        "tool_calls": 0,
+    }
+
+
 def run_in_batches(
-    runner: Callable[..., Dict[str, Any]],
+    framework_name: str,
     interaction_ids: List[str],
     *,
     batch_size: int,
     auto_approve: bool,
     log: logging.Logger,
     max_total_cost_usd: Optional[float] = None,
+    hard_timeout_grace_seconds: float = HARD_TIMEOUT_GRACE_SECONDS,
 ) -> Dict[str, Any]:
     """Invoca al runner en lotes de tamaño `batch_size` y agrega los resultados.
 
     Cada lote es una llamada independiente al runner — cada una con su propio
     presupuesto (timeout / tool_calls / cost) leído de `configs/experiments/budget.yaml`.
-    Las fallas o abortos de un lote individual se registran como entradas en
-    `errors` y el helper continúa con el siguiente lote.
+
+    **Aislamiento por subproceso.** Cada lote corre en un `mp.Process` separado
+    (contexto `spawn`). Si el wall-clock excede `budget.timeout_seconds +
+    hard_timeout_grace_seconds`, el subproceso se mata con SIGTERM → SIGKILL
+    y el lote se marca como `status="timeout"`. Esto previene cuelgues
+    indefinidos cuando el check interno del runner no se dispara (p.ej.
+    bloqueado en una llamada de red C-nivel donde un signal.SIGALRM no
+    interrumpe). El runner se ejecuta como callable picklable: pasamos el
+    `framework_name` y re-despachamos dentro del subproceso.
 
     Reglas de agregación:
     - `articles`: concatenación con `article_id` renumerado globalmente y
@@ -177,15 +246,32 @@ def run_in_batches(
       es el wall-clock real del conjunto de lotes.
     - Se añaden tres campos a `metrics` no presentes en los runners:
       `batch_count`, `batch_size`, `latency_per_batch_median`.
-    - El campo `batches` (sibling de `metrics`) describe cada lote.
+    - El campo `batches` (sibling de `metrics`) describe cada lote (status
+      incluye `completed`, `aborted`, `crashed`, `timeout`).
     """
+    # Validación temprana del framework (falla en proceso padre si el módulo no carga).
+    dispatch_runner(framework_name)
+
+    # Timeout duro: leído de budget.yaml, una sola vez.
+    budget_path = PROJECT_ROOT / "configs" / "experiments" / "budget.yaml"
+    with open(budget_path, "r", encoding="utf-8") as f:
+        _budget = yaml.safe_load(f)
+    inner_timeout = float(_budget["budget"]["timeout_seconds"])
+    hard_deadline = inner_timeout + float(hard_timeout_grace_seconds)
+
     batches = _chunks(interaction_ids, batch_size)
     log.info(
-        "Batching: %d interacciones → %d lotes de hasta %d",
+        "Batching: %d interacciones → %d lotes de hasta %d "
+        "(timeout duro/lote: %.0fs interno + %.0fs gracia = %.0fs)",
         len(interaction_ids),
         len(batches),
         batch_size,
+        inner_timeout,
+        hard_timeout_grace_seconds,
+        hard_deadline,
     )
+
+    mp_ctx = mp.get_context("spawn")
 
     agg_articles: List[Dict[str, Any]] = []
     agg_map: Dict[str, List[str]] = {}
@@ -226,41 +312,127 @@ def run_in_batches(
             len(batch_ids),
             ", ".join(batch_ids),
         )
+
+        # Archivo temporal para el IPC del resultado (Pipe puede bloquearse con
+        # payloads grandes; archivo evita ese deadlock).
+        tmp_fd, result_path = tempfile.mkstemp(
+            prefix=f"runner_b{b_idx}_", suffix=".json"
+        )
+        os.close(tmp_fd)
+        Path(result_path).unlink(missing_ok=True)
+
+        proc = mp_ctx.Process(
+            target=_runner_subprocess_entry,
+            args=(framework_name, batch_ids, auto_approve, result_path),
+            name=f"runner-b{b_idx}",
+        )
         t0 = time.time()
-        try:
-            result = runner(batch_ids, auto_approve=auto_approve)
-            status = "aborted" if result.get("aborted") else "completed"
-            crashed = False
-        except Exception as e:  # noqa: BLE001
+        proc.start()
+        proc.join(hard_deadline)
+        elapsed = round(time.time() - t0, 3)
+
+        if proc.is_alive():
+            log.error(
+                "Lote %d: HARD TIMEOUT tras %.1fs (límite %.0fs). "
+                "Matando subproceso PID %s.",
+                b_idx,
+                elapsed,
+                hard_deadline,
+                proc.pid,
+            )
+            proc.terminate()
+            proc.join(5)
+            if proc.is_alive():
+                log.error(
+                    "Lote %d: SIGTERM ignorado tras 5s, enviando SIGKILL.", b_idx
+                )
+                proc.kill()
+                proc.join()
             elapsed = round(time.time() - t0, 3)
-            log.exception("Lote %d crasheó: %s", b_idx, e)
             agg_errors.append(
                 {
                     "phase": "batch_runner",
                     "batch_idx": b_idx,
                     "batch_ids": batch_ids,
-                    "error": f"crash: {type(e).__name__}: {e}",
+                    "error": (
+                        f"hard_timeout: subproceso matado tras {elapsed:.1f}s "
+                        f"(límite {hard_deadline:.0f}s)"
+                    ),
                     "elapsed_seconds": elapsed,
                     "ts": _now_iso(),
                 }
             )
             agg_batches.append(
+                _empty_batch_record(b_idx, batch_ids, "timeout", elapsed)
+            )
+            Path(result_path).unlink(missing_ok=True)
+            continue
+
+        # Subproceso terminó dentro del límite — leer resultado.
+        try:
+            with open(result_path, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+        except FileNotFoundError:
+            log.error(
+                "Lote %d: subproceso salió (exitcode=%s) sin escribir resultado.",
+                b_idx,
+                proc.exitcode,
+            )
+            agg_errors.append(
                 {
+                    "phase": "batch_runner",
                     "batch_idx": b_idx,
                     "batch_ids": batch_ids,
-                    "status": "crashed",
+                    "error": f"subprocess_died_no_result: exitcode={proc.exitcode}",
                     "elapsed_seconds": elapsed,
-                    "articles_generated": 0,
-                    "errors": 1,
-                    "cost_usd": 0.0,
-                    "tokens_in": 0,
-                    "tokens_out": 0,
-                    "tool_calls": 0,
+                    "ts": _now_iso(),
                 }
+            )
+            agg_batches.append(
+                _empty_batch_record(b_idx, batch_ids, "crashed", elapsed)
+            )
+            continue
+        except Exception as e:  # noqa: BLE001
+            log.exception("Lote %d: no se pudo leer resultado del subproceso: %s", b_idx, e)
+            agg_errors.append(
+                {
+                    "phase": "batch_runner",
+                    "batch_idx": b_idx,
+                    "batch_ids": batch_ids,
+                    "error": f"result_read_failed: {type(e).__name__}: {e}",
+                    "elapsed_seconds": elapsed,
+                    "ts": _now_iso(),
+                }
+            )
+            agg_batches.append(
+                _empty_batch_record(b_idx, batch_ids, "crashed", elapsed)
+            )
+            Path(result_path).unlink(missing_ok=True)
+            continue
+        finally:
+            Path(result_path).unlink(missing_ok=True)
+
+        if payload.get("status") == "error":
+            err_msg = payload.get("error", "unknown")
+            log.error("Lote %d crasheó en subproceso: %s", b_idx, err_msg)
+            agg_errors.append(
+                {
+                    "phase": "batch_runner",
+                    "batch_idx": b_idx,
+                    "batch_ids": batch_ids,
+                    "error": f"crash: {err_msg}",
+                    "traceback": payload.get("traceback"),
+                    "elapsed_seconds": elapsed,
+                    "ts": _now_iso(),
+                }
+            )
+            agg_batches.append(
+                _empty_batch_record(b_idx, batch_ids, "crashed", elapsed)
             )
             continue
 
-        elapsed = round(time.time() - t0, 3)
+        result = payload["result"]
+        status = "aborted" if result.get("aborted") else "completed"
         m = result.get("metrics") or {}
         batch_articles = result.get("articles") or []
 
