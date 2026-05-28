@@ -67,7 +67,14 @@ system: |
   - `environment.segment` por ahora siempre "Banca Personal" (audiencia: persona
     natural).
   - `problem` describe la duda/escenario del cliente en una o dos oraciones.
-  - `cause` puede ser null si el caso es how-to o faq sin causa raíz.
+  - `cause` es obligatorio, nunca vacío ni null:
+    - Si `article_type` es **troubleshooting**: identifica la causa raíz del
+      problema (ej. "Bloqueo por intentos fallidos de PIN", "Saldo insuficiente
+      tras retención de transferencia ACH"). Debe ser una afirmación causal
+      respaldada por la evidencia.
+    - Si `article_type` es **howto** o **faq**: escribe literalmente
+      "No aplica — artículo informativo/procedimental". Esto comunica al
+      revisor que el caso es por diseño sin causa raíz.
   - `resolution` es una lista de pasos numerados ("1. ...", "2. ..."); el texto
     total debe tener al menos 50 caracteres.
   - `evidence_pack.interaction_ids` ≥ 1 (todos los IDs del grupo fuente).

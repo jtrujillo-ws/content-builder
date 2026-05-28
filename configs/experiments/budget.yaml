@@ -23,7 +23,7 @@ budget:
 # Modelo LLM — variable de control (mismo para los 3 frameworks).
 model:
   provider: anthropic
-  name: claude-sonnet-4-20250514
+  name: claude-sonnet-4-6-20250514
   temperature: 0.3
   max_tokens: 4096
   top_p: 1.0
@@ -58,7 +58,7 @@ telemetry:
 # Pricing usado para el cálculo de cost_usd_estimated (USD por millón de tokens).
 # Actualizar si Anthropic cambia precios — fuente: https://www.anthropic.com/pricing
 pricing:
-  claude-sonnet-4-20250514:
+  claude-sonnet-4-6-20250514:
     input_per_mtok: 3.00
     output_per_mtok: 15.00
     cache_write_per_mtok: 3.75
