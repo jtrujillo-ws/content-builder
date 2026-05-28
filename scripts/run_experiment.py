@@ -47,6 +47,7 @@ from scripts._common import (  # noqa: E402
     git_info,
     load_model_name,
     load_splits,
+    run_in_batches,
     setup_logging,
     write_run_artifacts,
 )
@@ -57,66 +58,6 @@ ABLATION_CHOICES = ("no_grouping", "no_critic", "no_evidence", "no_memory")
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
-
-
-def _aggregate_singleton_runs(
-    runner, interaction_ids: List[str], auto_approve: bool, log
-) -> Dict[str, Any]:
-    """Para --ablation no_grouping: invoca el runner una vez por id y agrega."""
-    agg_articles: List[Dict[str, Any]] = []
-    agg_map: Dict[str, List[str]] = {}
-    agg_traces: List[Dict[str, Any]] = []
-    agg_errors: List[Dict[str, Any]] = []
-    agg_metrics: Dict[str, Any] = {
-        "total_time_seconds": 0.0,
-        "total_tokens_in": 0,
-        "total_tokens_out": 0,
-        "cache_read_tokens": 0,
-        "cache_creation_tokens": 0,
-        "total_tool_calls": 0,
-        "cost_usd": 0.0,
-        "revision_cycles": 0,
-        "articles_generated": 0,
-        "successful_requests": 0,
-    }
-    aborted_any = False
-
-    for n, iid in enumerate(interaction_ids, start=1):
-        log.info("[singleton %d/%d] %s", n, len(interaction_ids), iid)
-        r = runner([iid], auto_approve=auto_approve)
-        m = r.get("metrics", {}) or {}
-        for k in list(agg_metrics.keys()):
-            if k in m and isinstance(m[k], (int, float)):
-                agg_metrics[k] += m[k]
-        for art in r.get("articles", []):
-            old_id = art["article_id"]
-            new_id = f"ART-{len(agg_articles) + 1:03d}"
-            new_record = dict(art)
-            new_record["article_id"] = new_id
-            new_record["original_singleton_source"] = iid
-            agg_articles.append(new_record)
-            agg_map[new_id] = r.get("article_interaction_map", {}).get(old_id, [iid])
-        for t in r.get("traces", []):
-            t2 = dict(t)
-            t2["_singleton_id"] = iid
-            agg_traces.append(t2)
-        for e in r.get("errors", []):
-            e2 = dict(e)
-            e2["_singleton_id"] = iid
-            agg_errors.append(e2)
-        aborted_any = aborted_any or bool(r.get("aborted"))
-
-    agg_metrics["articles_generated"] = len(agg_articles)
-    agg_metrics["total_time_seconds"] = round(agg_metrics["total_time_seconds"], 3)
-    agg_metrics["cost_usd"] = round(agg_metrics["cost_usd"], 6)
-    return {
-        "articles": agg_articles,
-        "article_interaction_map": agg_map,
-        "traces": agg_traces,
-        "metrics": agg_metrics,
-        "errors": agg_errors,
-        "aborted": aborted_any,
-    }
 
 
 def main(argv=None) -> int:
@@ -131,7 +72,21 @@ def main(argv=None) -> int:
         "--ablation",
         choices=ABLATION_CHOICES,
         default=None,
-        help="Ablación opcional. Sólo `no_grouping` se aplica en este script.",
+        help="Ablación opcional. `no_grouping` fuerza batch_size=1; las otras se "
+        "registran como metadata y no alteran el comportamiento del runner.",
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=5,
+        help="Interacciones por invocación del runner (default 5). "
+        "Si --ablation=no_grouping, se fuerza a 1.",
+    )
+    parser.add_argument(
+        "--max-total-cost",
+        type=float,
+        default=20.0,
+        help="Tope global de costo USD por run (default $20).",
     )
     parser.add_argument(
         "--no-auto-approve",
@@ -153,6 +108,10 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     log = setup_logging("INFO")
 
+    if args.batch_size < 1:
+        log.error("--batch-size debe ser ≥ 1")
+        return 2
+
     splits = load_splits()
     ids = list(splits.get("evaluation") or [])
     if args.limit:
@@ -160,13 +119,25 @@ def main(argv=None) -> int:
     if not ids:
         log.error("No hay IDs en evaluation/splits.yaml")
         return 2
-    log.info("Evaluación: %d interaction_ids, %d repeticiones", len(ids), args.runs)
+
+    effective_batch_size = 1 if args.ablation == "no_grouping" else args.batch_size
+
+    log.info(
+        "Evaluación: %d interaction_ids, %d repeticiones, batch_size=%d",
+        len(ids),
+        args.runs,
+        effective_batch_size,
+    )
     if args.ablation:
-        log.warning(
-            "Ablación %s solicitada. "
-            + ("Aplicada en este script." if args.ablation == "no_grouping" else "Registrada en metadata; comportamiento no alterado (requiere wiring en runner).") ,
-            args.ablation,
-        )
+        if args.ablation == "no_grouping":
+            log.warning(
+                "Ablación no_grouping: forzando batch_size=1 (cada interacción en su propia invocación)."
+            )
+        else:
+            log.warning(
+                "Ablación %s registrada en metadata; requiere wiring en el runner para tener efecto.",
+                args.ablation,
+            )
 
     runner = dispatch_runner(args.framework)
 
@@ -198,6 +169,8 @@ def main(argv=None) -> int:
             "auto_approve": args.auto_approve,
             "split": "evaluation",
             "interaction_ids": ids,
+            "batch_size": effective_batch_size,
+            "max_total_cost_usd": args.max_total_cost,
             "started_at_utc": run_started.isoformat(timespec="seconds"),
             "model_name": load_model_name(),
             "prompt_version": git.get("latest_tag") or None,
@@ -209,16 +182,22 @@ def main(argv=None) -> int:
 
         t0 = time.time()
         try:
-            if args.ablation == "no_grouping":
-                result = _aggregate_singleton_runs(
-                    runner, ids, args.auto_approve, log
-                )
-            else:
-                result = runner(ids, auto_approve=args.auto_approve)
+            result = run_in_batches(
+                runner,
+                ids,
+                batch_size=effective_batch_size,
+                auto_approve=args.auto_approve,
+                log=log,
+                max_total_cost_usd=args.max_total_cost,
+            )
             elapsed = round(time.time() - t0, 3)
             metadata["completed_at_utc"] = _now_iso()
             metadata["wall_clock_seconds"] = elapsed
-            metadata["status"] = "aborted" if result.get("aborted") else "completed"
+            metadata["status"] = (
+                "aborted_global" if result.get("aborted") else "completed"
+            )
+            metadata["batch_count"] = result["metrics"].get("batch_count", 0)
+            metadata["batches_aborted"] = result["metrics"].get("batches_aborted", 0)
         except Exception as e:  # noqa: BLE001
             elapsed = round(time.time() - t0, 3)
             log.exception("Excepción en run %d: %s", n, e)
