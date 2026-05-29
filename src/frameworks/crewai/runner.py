@@ -17,6 +17,7 @@ import yaml
 from crewai import LLM, Agent, Crew, Process, Task
 from dotenv import load_dotenv
 
+from src.frameworks.crewai.llm_patch import PrefillSafeAnthropicCompletion
 from src.frameworks.crewai.tools import (
     RUN_STATE,
     build_tools,
@@ -98,11 +99,16 @@ def _extract_json(text: str) -> Any:
 
 
 def _build_llm(model_cfg: Dict[str, Any]) -> LLM:
-    return LLM(
-        model=f"anthropic/{model_cfg['name']}",
+    # claude-sonnet-4-5 / 4-6 no soportan assistant message prefill. La fábrica
+    # `crewai.LLM("anthropic/...")` enruta al provider nativo `AnthropicCompletion`,
+    # cuya formateadora no se altera con subclases de `LLM`. Por eso instanciamos
+    # directamente el subclase de `AnthropicCompletion`. Ver
+    # src/frameworks/crewai/llm_patch.py.
+    return PrefillSafeAnthropicCompletion(
+        model=model_cfg["name"],
+        api_key=os.environ["ANTHROPIC_API_KEY"],
         temperature=model_cfg["temperature"],
         max_tokens=model_cfg["max_tokens"],
-        api_key=os.environ["ANTHROPIC_API_KEY"],
     )
 
 

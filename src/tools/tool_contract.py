@@ -245,19 +245,52 @@ class InteractionStore:
         self._embeddings = None  # invalidar embeddings al recargar
         self._loaded_path = path
 
+    def _embeddings_cache_path(self) -> Path:
+        # Cache compartida en disco para que cada subproceso reutilice los
+        # embeddings ya calculados (el singleton InteractionStore vive en
+        # un único proceso; scripts/_common.py lanza cada lote en mp.spawn).
+        import hashlib
+
+        assert self._loaded_path is not None
+        try:
+            mtime = self._loaded_path.stat().st_mtime_ns
+        except OSError:
+            mtime = 0
+        key = f"{self._loaded_path}|{mtime}|{EMBEDDING_MODEL_NAME}|{len(self._interactions)}"
+        digest = hashlib.sha256(key.encode("utf-8")).hexdigest()[:16]
+        return self._loaded_path.parent / f".embeddings_cache.{digest}.npy"
+
     def _ensure_embeddings(self):
         if self._embeddings is not None:
             return
-        from sentence_transformers import SentenceTransformer  # import diferido
+        import numpy as np
 
-        if self._model is None:
-            self._model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+        cache_path = self._embeddings_cache_path()
+        if cache_path.exists():
+            try:
+                cached = np.load(cache_path)
+                if cached.shape[0] == len(self._index_texts):
+                    self._embeddings = cached
+                    return
+            except Exception:  # noqa: BLE001 — cache corrupta: recomputar
+                pass
+
+        self._ensure_model()
         self._embeddings = self._model.encode(
             self._index_texts,
             convert_to_numpy=True,
             normalize_embeddings=True,
             show_progress_bar=False,
         )
+        try:
+            # np.save añade ".npy" si la ruta no termina en .npy; usamos una
+            # temp distinta para evitar `.npy.tmp.npy`.
+            tmp_path = cache_path.with_name(cache_path.name + ".tmp")
+            np.save(str(tmp_path), self._embeddings)  # np.save añade .npy
+            actual_tmp = tmp_path.with_suffix(tmp_path.suffix + ".npy")
+            os.replace(actual_tmp, cache_path)
+        except Exception:  # noqa: BLE001 — el cache es best-effort
+            pass
 
     def all(self) -> List[Dict[str, Any]]:
         self._ensure_loaded()
@@ -267,9 +300,19 @@ class InteractionStore:
         self._ensure_loaded()
         return self._by_id.get(interaction_id)
 
+    def _ensure_model(self) -> None:
+        if self._model is not None:
+            return
+        from sentence_transformers import SentenceTransformer  # import diferido
+
+        self._model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+
     def search(self, query: str, k: int) -> List[Tuple[Dict[str, Any], float]]:
         self._ensure_loaded()
         self._ensure_embeddings()
+        # _ensure_embeddings puede haber cargado desde cache sin tocar el modelo;
+        # para encodear la query siempre necesitamos el modelo.
+        self._ensure_model()
         import numpy as np
 
         q_emb = self._model.encode(

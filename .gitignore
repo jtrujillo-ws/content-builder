@@ -6,3 +6,4 @@ runs/
 eval/results/
 .DS_Store
 *.egg-info/
+data/processed/.embeddings_cache.*
