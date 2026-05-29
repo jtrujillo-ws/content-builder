@@ -99,6 +99,18 @@ def main(argv=None) -> int:
         help="Limita el número de interacciones (humo).",
     )
     parser.add_argument(
+        "--eval-subset",
+        type=str,
+        default=None,
+        metavar="YAML",
+        help=(
+            "Ruta a un YAML con `interaction_ids: [...]` (p. ej. "
+            "`data/splits/eval_subset_50.yaml`). Si se pasa, se usa esa lista "
+            "en vez del split completo de evaluación. Los IDs deben pertenecer "
+            "al split de evaluación."
+        ),
+    )
+    parser.add_argument(
         "--start-run",
         type=int,
         default=1,
@@ -113,6 +125,44 @@ def main(argv=None) -> int:
 
     splits = load_splits()
     ids = list(splits.get("evaluation") or [])
+    subset_meta: Dict[str, Any] = {}
+    if args.eval_subset:
+        import yaml as _yaml
+
+        subset_path = Path(args.eval_subset)
+        if not subset_path.is_absolute():
+            subset_path = PROJECT_ROOT / subset_path
+        if not subset_path.exists():
+            log.error("No existe --eval-subset: %s", subset_path)
+            return 2
+        with open(subset_path, "r", encoding="utf-8") as f:
+            subset_doc = _yaml.safe_load(f) or {}
+        subset_ids = list(subset_doc.get("interaction_ids") or [])
+        if not subset_ids:
+            log.error("--eval-subset YAML no contiene `interaction_ids`")
+            return 2
+        eval_set = set(ids)
+        out_of_split = [i for i in subset_ids if i not in eval_set]
+        if out_of_split:
+            log.error(
+                "--eval-subset contiene IDs fuera del split de evaluación: %s",
+                out_of_split[:5],
+            )
+            return 2
+        log.info(
+            "Usando subset %s: %d/%d IDs del split evaluation",
+            subset_path.name,
+            len(subset_ids),
+            len(ids),
+        )
+        ids = subset_ids
+        subset_meta = {
+            "path": str(subset_path.relative_to(PROJECT_ROOT)),
+            "name": subset_doc.get("name"),
+            "subset_n": subset_doc.get("subset_n"),
+            "source_split": subset_doc.get("source_split"),
+            "sampling": subset_doc.get("sampling"),
+        }
     if args.limit:
         ids = ids[: args.limit]
     if not ids:
@@ -165,6 +215,7 @@ def main(argv=None) -> int:
             "ablation": args.ablation,
             "auto_approve": args.auto_approve,
             "split": "evaluation",
+            "eval_subset": subset_meta or None,
             "interaction_ids": ids,
             "batch_size": effective_batch_size,
             "max_total_cost_usd": args.max_total_cost,
@@ -250,6 +301,7 @@ def main(argv=None) -> int:
         "ablation": args.ablation,
         "auto_approve": args.auto_approve,
         "split": "evaluation",
+        "eval_subset": subset_meta or None,
         "n_runs": args.runs,
         "interaction_count": len(ids),
         "started_at_utc": overall_started.isoformat(timespec="seconds"),

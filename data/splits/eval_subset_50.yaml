@@ -1,0 +1,422 @@
+name: eval_subset_50
+source_split: evaluation
+source_n: 109
+subset_n: 50
+sampling:
+  method: stratified
+  strata:
+  - product_category
+  - severity
+  - query_type
+  allocation: largest_remainder
+  seed: 42
+marginals_subset:
+  product_category:
+    cuentas: 10
+    tarjetas: 6
+    transferencias: 6
+    creditos: 10
+    canales_digitales: 11
+    otros: 7
+  severity:
+    informativa: 16
+    critica: 10
+    operativa: 24
+  query_type:
+    howto: 12
+    faq: 10
+    troubleshooting: 12
+    politica: 16
+marginals_source:
+  product_category:
+    cuentas: 19
+    otros: 19
+    transferencias: 18
+    canales_digitales: 18
+    tarjetas: 15
+    creditos: 20
+  severity:
+    critica: 20
+    informativa: 35
+    operativa: 54
+  query_type:
+    faq: 20
+    howto: 27
+    politica: 36
+    troubleshooting: 26
+cell_allocation:
+- cell:
+  - canales_digitales
+  - critica
+  - howto
+  available: 1
+  sampled: 1
+- cell:
+  - canales_digitales
+  - critica
+  - troubleshooting
+  available: 1
+  sampled: 1
+- cell:
+  - canales_digitales
+  - informativa
+  - faq
+  available: 1
+  sampled: 1
+- cell:
+  - canales_digitales
+  - informativa
+  - politica
+  available: 2
+  sampled: 1
+- cell:
+  - canales_digitales
+  - informativa
+  - troubleshooting
+  available: 1
+  sampled: 1
+- cell:
+  - canales_digitales
+  - operativa
+  - faq
+  available: 2
+  sampled: 1
+- cell:
+  - canales_digitales
+  - operativa
+  - howto
+  available: 1
+  sampled: 1
+- cell:
+  - canales_digitales
+  - operativa
+  - politica
+  available: 7
+  sampled: 3
+- cell:
+  - canales_digitales
+  - operativa
+  - troubleshooting
+  available: 2
+  sampled: 1
+- cell:
+  - creditos
+  - critica
+  - faq
+  available: 1
+  sampled: 1
+- cell:
+  - creditos
+  - critica
+  - howto
+  available: 3
+  sampled: 1
+- cell:
+  - creditos
+  - informativa
+  - faq
+  available: 2
+  sampled: 1
+- cell:
+  - creditos
+  - informativa
+  - howto
+  available: 1
+  sampled: 1
+- cell:
+  - creditos
+  - informativa
+  - politica
+  available: 3
+  sampled: 1
+- cell:
+  - creditos
+  - informativa
+  - troubleshooting
+  available: 2
+  sampled: 1
+- cell:
+  - creditos
+  - operativa
+  - faq
+  available: 3
+  sampled: 1
+- cell:
+  - creditos
+  - operativa
+  - howto
+  available: 1
+  sampled: 1
+- cell:
+  - creditos
+  - operativa
+  - politica
+  available: 1
+  sampled: 1
+- cell:
+  - creditos
+  - operativa
+  - troubleshooting
+  available: 3
+  sampled: 1
+- cell:
+  - cuentas
+  - critica
+  - faq
+  available: 1
+  sampled: 1
+- cell:
+  - cuentas
+  - critica
+  - howto
+  available: 1
+  sampled: 1
+- cell:
+  - cuentas
+  - critica
+  - politica
+  available: 2
+  sampled: 1
+- cell:
+  - cuentas
+  - critica
+  - troubleshooting
+  available: 1
+  sampled: 1
+- cell:
+  - cuentas
+  - informativa
+  - faq
+  available: 1
+  sampled: 1
+- cell:
+  - cuentas
+  - informativa
+  - howto
+  available: 4
+  sampled: 2
+- cell:
+  - cuentas
+  - informativa
+  - politica
+  available: 1
+  sampled: 0
+- cell:
+  - cuentas
+  - operativa
+  - faq
+  available: 3
+  sampled: 1
+- cell:
+  - cuentas
+  - operativa
+  - howto
+  available: 2
+  sampled: 1
+- cell:
+  - cuentas
+  - operativa
+  - politica
+  available: 1
+  sampled: 0
+- cell:
+  - cuentas
+  - operativa
+  - troubleshooting
+  available: 2
+  sampled: 1
+- cell:
+  - otros
+  - critica
+  - howto
+  available: 1
+  sampled: 0
+- cell:
+  - otros
+  - critica
+  - politica
+  available: 4
+  sampled: 2
+- cell:
+  - otros
+  - informativa
+  - howto
+  available: 1
+  sampled: 0
+- cell:
+  - otros
+  - informativa
+  - politica
+  available: 2
+  sampled: 1
+- cell:
+  - otros
+  - informativa
+  - troubleshooting
+  available: 1
+  sampled: 0
+- cell:
+  - otros
+  - operativa
+  - faq
+  available: 2
+  sampled: 1
+- cell:
+  - otros
+  - operativa
+  - howto
+  available: 1
+  sampled: 0
+- cell:
+  - otros
+  - operativa
+  - politica
+  available: 6
+  sampled: 3
+- cell:
+  - otros
+  - operativa
+  - troubleshooting
+  available: 1
+  sampled: 0
+- cell:
+  - tarjetas
+  - critica
+  - faq
+  available: 1
+  sampled: 0
+- cell:
+  - tarjetas
+  - critica
+  - politica
+  available: 1
+  sampled: 0
+- cell:
+  - tarjetas
+  - informativa
+  - howto
+  available: 1
+  sampled: 0
+- cell:
+  - tarjetas
+  - informativa
+  - politica
+  available: 2
+  sampled: 1
+- cell:
+  - tarjetas
+  - informativa
+  - troubleshooting
+  available: 4
+  sampled: 2
+- cell:
+  - tarjetas
+  - operativa
+  - howto
+  available: 4
+  sampled: 2
+- cell:
+  - tarjetas
+  - operativa
+  - troubleshooting
+  available: 2
+  sampled: 1
+- cell:
+  - transferencias
+  - critica
+  - howto
+  available: 1
+  sampled: 0
+- cell:
+  - transferencias
+  - critica
+  - troubleshooting
+  available: 1
+  sampled: 0
+- cell:
+  - transferencias
+  - informativa
+  - howto
+  available: 3
+  sampled: 1
+- cell:
+  - transferencias
+  - informativa
+  - troubleshooting
+  available: 3
+  sampled: 1
+- cell:
+  - transferencias
+  - operativa
+  - faq
+  available: 3
+  sampled: 1
+- cell:
+  - transferencias
+  - operativa
+  - howto
+  available: 1
+  sampled: 0
+- cell:
+  - transferencias
+  - operativa
+  - politica
+  available: 4
+  sampled: 2
+- cell:
+  - transferencias
+  - operativa
+  - troubleshooting
+  available: 2
+  sampled: 1
+interaction_ids:
+- INT-2024-010
+- INT-2024-011
+- INT-2024-017
+- INT-2024-020
+- INT-2024-021
+- INT-2024-023
+- INT-2024-024
+- INT-2024-028
+- INT-2024-033
+- INT-2024-034
+- INT-2024-041
+- INT-2024-050
+- INT-2024-052
+- INT-2024-053
+- INT-2024-060
+- INT-2024-062
+- INT-2024-074
+- INT-2024-081
+- INT-2024-085
+- INT-2024-091
+- INT-2024-093
+- INT-2024-100
+- INT-2024-103
+- INT-2024-104
+- INT-2024-106
+- INT-2024-107
+- INT-2024-113
+- INT-2024-115
+- INT-2024-126
+- INT-2024-128
+- INT-2024-129
+- INT-2024-130
+- INT-2024-143
+- INT-2024-147
+- INT-2024-148
+- INT-2024-153
+- INT-2024-154
+- INT-2024-156
+- INT-2024-158
+- INT-2024-161
+- INT-2024-163
+- INT-2024-165
+- INT-2024-167
+- INT-2024-169
+- INT-2024-170
+- INT-2024-181
+- INT-2024-184
+- INT-2024-189
+- INT-2024-194
+- INT-2024-197
