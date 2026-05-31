@@ -1,0 +1,38 @@
+# Content Builder — dependencias del proyecto
+# Python 3.11 (CrewAI moderno requiere >= 3.10; ver docs/proceso_experimental.md §3.1)
+# Versiones pinneadas a las usadas en la batería experimental (2026-05).
+#
+# Instalar:  python3.11 -m venv .venv && .venv/bin/pip install -r requirements.txt
+
+# --- Frameworks de agentes bajo evaluación (variable independiente) ---
+langgraph==1.2.2
+langchain-core==1.4.0
+crewai==1.6.1
+openai-agents==0.17.4
+
+# --- Acceso al modelo LLM (claude-sonnet-4-6, variable de control) ---
+anthropic==0.104.1
+litellm==1.86.1            # adapter LiteLLM para CrewAI / OpenAI Agents -> Anthropic
+
+# --- Embeddings y similitud (tool search_interactions + métricas) ---
+# torch es específico de plataforma; en otra máquina/CUDA puede requerir el
+# índice de wheels de PyTorch (https://pytorch.org). Pin informativo.
+sentence-transformers==5.5.1
+torch==2.12.0
+transformers==5.9.0
+huggingface-hub==1.16.4
+scikit-learn==1.8.0       # similitud TF-IDF vs KB de referencia (compute_metrics)
+numpy==2.4.6
+
+# --- Datos, configuración y validación ---
+PyYAML==6.0.3
+python-dotenv==1.2.2       # carga de ANTHROPIC_API_KEY desde .env
+pydantic==2.13.4           # validación de la plantilla KCS
+
+# --- Análisis estadístico y visualización ---
+scipy==1.17.1              # Friedman, Wilcoxon, studentized_range (Nemenyi)
+matplotlib==3.10.9         # box plots, radar, heatmap
+openpyxl==3.1.5            # lectura/escritura de los Excel de evaluación humana
+
+# --- Testing ---
+pytest==9.0.3
