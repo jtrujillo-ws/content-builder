@@ -1,0 +1,220 @@
+{
+  "runs_root": "runs/experiment_reserve",
+  "frameworks": {
+    "crewai": {
+      "framework": "crewai",
+      "ablation": null,
+      "n_runs": 1,
+      "consolidation": {
+        "articles_avg": 37.0,
+        "consolidation_ratio_avg": 1.0,
+        "interaction_coverage_pct_avg": 100.0,
+        "topical_overlap_pairs_gt_0_7_avg": 3.0
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 0.9769626769626769,
+        "reference_similarity_avg": 0.11518530899105119,
+        "reference_similarity_max_avg": 0.37888201378755393
+      },
+      "engineering": {
+        "n_runs": 1,
+        "latency_seconds": {
+          "median": 10916.677,
+          "p90": 10916.677,
+          "min": 10916.677,
+          "max": 10916.677
+        },
+        "cost_usd": {
+          "median": 18.833097,
+          "total": 18.833097
+        },
+        "tool_calls_avg": 491,
+        "failure_rate_pct": 0.0,
+        "loc": 932
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment_reserve/crewai/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 37,
+            "input_interactions": 37,
+            "consolidation_ratio": 1.0,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 3
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 0.9769626769626769,
+            "reference_similarity_avg": 0.11518530899105119,
+            "reference_similarity_max_avg": 0.37888201378755393
+          },
+          "metrics": {
+            "total_tokens_in": 3161654,
+            "total_tokens_out": 623209,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 491,
+            "cost_usd": 18.833097,
+            "revision_cycles": 37,
+            "articles_generated": 37,
+            "successful_requests": 713,
+            "total_time_seconds": 10916.677,
+            "batch_count": 37,
+            "batch_size": 1,
+            "latency_per_batch_median": 288.187,
+            "latency_per_batch_max": 459.398,
+            "batches_aborted": 0
+          }
+        }
+      ]
+    },
+    "langgraph": {
+      "framework": "langgraph",
+      "ablation": null,
+      "n_runs": 1,
+      "consolidation": {
+        "articles_avg": 40.0,
+        "consolidation_ratio_avg": 0.925,
+        "interaction_coverage_pct_avg": 91.8918918918919,
+        "topical_overlap_pairs_gt_0_7_avg": 3.0
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 1.0,
+        "reference_similarity_avg": 0.11021391946429487,
+        "reference_similarity_max_avg": 0.40099760718193
+      },
+      "engineering": {
+        "n_runs": 1,
+        "latency_seconds": {
+          "median": 11624.643,
+          "p90": 11624.643,
+          "min": 11624.643,
+          "max": 11624.643
+        },
+        "cost_usd": {
+          "median": 17.286102,
+          "total": 17.286102
+        },
+        "tool_calls_avg": 1207,
+        "failure_rate_pct": 0.0,
+        "loc": 831
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment_reserve/langgraph/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 40,
+            "input_interactions": 37,
+            "consolidation_ratio": 0.925,
+            "interaction_coverage_pct": 91.8918918918919,
+            "topical_overlap_pairs_gt_0_7": 3
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11021391946429487,
+            "reference_similarity_max_avg": 0.40099760718193
+          },
+          "metrics": {
+            "total_tokens_in": 1474217,
+            "total_tokens_out": 675226,
+            "cache_read_tokens": 1680832,
+            "cache_creation_tokens": 594883,
+            "total_tool_calls": 1207,
+            "cost_usd": 17.286102,
+            "revision_cycles": 24,
+            "articles_generated": 40,
+            "successful_requests": 0,
+            "total_time_seconds": 11624.643,
+            "batch_count": 37,
+            "batch_size": 1,
+            "latency_per_batch_median": 186.334,
+            "latency_per_batch_max": 930.089,
+            "batches_aborted": 2
+          }
+        }
+      ]
+    },
+    "openai_agents": {
+      "framework": "openai_agents",
+      "ablation": null,
+      "n_runs": 1,
+      "consolidation": {
+        "articles_avg": 42.0,
+        "consolidation_ratio_avg": 0.8809523809523809,
+        "interaction_coverage_pct_avg": 97.2972972972973,
+        "topical_overlap_pairs_gt_0_7_avg": 3.0
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 1.0,
+        "reference_similarity_avg": 0.11355210801001106,
+        "reference_similarity_max_avg": 0.3916277062712337
+      },
+      "engineering": {
+        "n_runs": 1,
+        "latency_seconds": {
+          "median": 11257.67,
+          "p90": 11257.67,
+          "min": 11257.67,
+          "max": 11257.67
+        },
+        "cost_usd": {
+          "median": 21.341967,
+          "total": 21.341967
+        },
+        "tool_calls_avg": 956,
+        "failure_rate_pct": 0.0,
+        "loc": 803
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment_reserve/openai_agents/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 42,
+            "input_interactions": 37,
+            "consolidation_ratio": 0.8809523809523809,
+            "interaction_coverage_pct": 97.2972972972973,
+            "topical_overlap_pairs_gt_0_7": 3
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11355210801001106,
+            "reference_similarity_max_avg": 0.3916277062712337
+          },
+          "metrics": {
+            "total_tokens_in": 3369899,
+            "total_tokens_out": 748818,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 956,
+            "cost_usd": 21.341967,
+            "revision_cycles": 12,
+            "articles_generated": 42,
+            "successful_requests": 601,
+            "total_time_seconds": 11257.67,
+            "batch_count": 37,
+            "batch_size": 1,
+            "latency_per_batch_median": 240.864,
+            "latency_per_batch_max": 804.25,
+            "batches_aborted": 0
+          }
+        }
+      ]
+    }
+  },
+  "reference_articles_count": 118,
+  "input_corpus_total": 183
+}

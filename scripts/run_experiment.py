@@ -66,6 +66,22 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--framework", required=True, choices=FRAMEWORK_CHOICES
     )
+    parser.add_argument(
+        "--split",
+        choices=("evaluation", "reserve", "calibration"),
+        default="evaluation",
+        help="Split de splits.yaml a usar (default evaluation). `reserve` se usa "
+        "para validación de robustez sobre las 37 interacciones reservadas.",
+    )
+    parser.add_argument(
+        "--out-subdir",
+        type=str,
+        default="experiment",
+        metavar="NAME",
+        help="Subcarpeta bajo runs/ donde se guardan los resultados "
+        "(default `experiment` → runs/experiment/). Usar p. ej. "
+        "`experiment_reserve` para separar la validación de robustez.",
+    )
     parser.add_argument("--runs", type=int, default=3, help="Repeticiones (default 3).")
     parser.add_argument(
         "--ablation",
@@ -124,9 +140,15 @@ def main(argv=None) -> int:
         return 2
 
     splits = load_splits()
-    ids = list(splits.get("evaluation") or [])
+    ids = list(splits.get(args.split) or [])
+    if not ids:
+        log.error("El split '%s' no existe o está vacío en splits.yaml", args.split)
+        return 2
     subset_meta: Dict[str, Any] = {}
     if args.eval_subset:
+        if args.split != "evaluation":
+            log.error("--eval-subset solo es válido con --split evaluation")
+            return 2
         import yaml as _yaml
 
         subset_path = Path(args.eval_subset)
@@ -166,13 +188,14 @@ def main(argv=None) -> int:
     if args.limit:
         ids = ids[: args.limit]
     if not ids:
-        log.error("No hay IDs en evaluation/splits.yaml")
+        log.error("No hay IDs en %s/splits.yaml", args.split)
         return 2
 
     effective_batch_size = 1 if args.ablation == "no_grouping" else args.batch_size
 
     log.info(
-        "Evaluación: %d interaction_ids, %d repeticiones, batch_size=%d",
+        "Split %s: %d interaction_ids, %d repeticiones, batch_size=%d",
+        args.split,
         len(ids),
         args.runs,
         effective_batch_size,
@@ -189,7 +212,7 @@ def main(argv=None) -> int:
             )
 
     # Carpeta base
-    base_dir = PROJECT_ROOT / "runs" / "experiment" / args.framework
+    base_dir = PROJECT_ROOT / "runs" / args.out_subdir / args.framework
     if args.ablation:
         base_dir = base_dir / args.ablation
     base_dir.mkdir(parents=True, exist_ok=True)
@@ -214,7 +237,7 @@ def main(argv=None) -> int:
             "framework": args.framework,
             "ablation": args.ablation,
             "auto_approve": args.auto_approve,
-            "split": "evaluation",
+            "split": args.split,
             "eval_subset": subset_meta or None,
             "interaction_ids": ids,
             "batch_size": effective_batch_size,
@@ -300,7 +323,7 @@ def main(argv=None) -> int:
         "framework": args.framework,
         "ablation": args.ablation,
         "auto_approve": args.auto_approve,
-        "split": "evaluation",
+        "split": args.split,
         "eval_subset": subset_meta or None,
         "n_runs": args.runs,
         "interaction_count": len(ids),

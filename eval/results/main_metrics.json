@@ -1,0 +1,712 @@
+{
+  "runs_root": "runs/experiment",
+  "frameworks": {
+    "baseline_heuristic": {
+      "framework": "baseline_heuristic",
+      "ablation": null,
+      "n_runs": 3,
+      "consolidation": {
+        "articles_avg": 50.0,
+        "consolidation_ratio_avg": 1.0,
+        "interaction_coverage_pct_avg": 100.0,
+        "topical_overlap_pairs_gt_0_7_avg": 0.0
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 1.0,
+        "reference_similarity_avg": 0.07420035864688715,
+        "reference_similarity_max_avg": 0.3660742122806842
+      },
+      "engineering": {
+        "n_runs": 3,
+        "latency_seconds": {
+          "median": 116.741,
+          "p90": 119.9106,
+          "min": 114.699,
+          "max": 120.703
+        },
+        "cost_usd": {
+          "median": 0,
+          "total": 0
+        },
+        "tool_calls_avg": 0,
+        "failure_rate_pct": 0.0,
+        "loc": 282
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment/baseline_heuristic/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 50,
+            "input_interactions": 50,
+            "consolidation_ratio": 1.0,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 0
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.07420035864688715,
+            "reference_similarity_max_avg": 0.36607421228068426
+          },
+          "metrics": {
+            "total_tokens_in": 0,
+            "total_tokens_out": 0,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 0,
+            "cost_usd": 0.0,
+            "revision_cycles": 0,
+            "articles_generated": 50,
+            "successful_requests": 0,
+            "total_time_seconds": 120.703,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 2.2809999999999997,
+            "latency_per_batch_max": 5.72,
+            "batches_aborted": 0
+          }
+        },
+        {
+          "run_dir": "runs/experiment/baseline_heuristic/run_2",
+          "status": "completed",
+          "consolidation": {
+            "articles": 50,
+            "input_interactions": 50,
+            "consolidation_ratio": 1.0,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 0
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.07420035864688715,
+            "reference_similarity_max_avg": 0.36607421228068426
+          },
+          "metrics": {
+            "total_tokens_in": 0,
+            "total_tokens_out": 0,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 0,
+            "cost_usd": 0.0,
+            "revision_cycles": 0,
+            "articles_generated": 50,
+            "successful_requests": 0,
+            "total_time_seconds": 116.741,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 2.2619999999999996,
+            "latency_per_batch_max": 4.168,
+            "batches_aborted": 0
+          }
+        },
+        {
+          "run_dir": "runs/experiment/baseline_heuristic/run_3",
+          "status": "completed",
+          "consolidation": {
+            "articles": 50,
+            "input_interactions": 50,
+            "consolidation_ratio": 1.0,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 0
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.07420035864688715,
+            "reference_similarity_max_avg": 0.36607421228068426
+          },
+          "metrics": {
+            "total_tokens_in": 0,
+            "total_tokens_out": 0,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 0,
+            "cost_usd": 0.0,
+            "revision_cycles": 0,
+            "articles_generated": 50,
+            "successful_requests": 0,
+            "total_time_seconds": 114.699,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 2.261,
+            "latency_per_batch_max": 2.83,
+            "batches_aborted": 0
+          }
+        }
+      ]
+    },
+    "baseline_prompt": {
+      "framework": "baseline_prompt",
+      "ablation": null,
+      "n_runs": 3,
+      "consolidation": {
+        "articles_avg": 50.0,
+        "consolidation_ratio_avg": 1.0,
+        "interaction_coverage_pct_avg": 100.0,
+        "topical_overlap_pairs_gt_0_7_avg": 0.0
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 1.0,
+        "reference_similarity_avg": 0.11095650754127347,
+        "reference_similarity_max_avg": 0.42839845226995515
+      },
+      "engineering": {
+        "n_runs": 3,
+        "latency_seconds": {
+          "median": 826.648,
+          "p90": 827.168,
+          "min": 814.08,
+          "max": 827.298
+        },
+        "cost_usd": {
+          "median": 0.916968,
+          "total": 2.743599
+        },
+        "tool_calls_avg": 0,
+        "failure_rate_pct": 0.0,
+        "loc": 340
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment/baseline_prompt/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 50,
+            "input_interactions": 50,
+            "consolidation_ratio": 1.0,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 0
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11160900261583835,
+            "reference_similarity_max_avg": 0.42988833633698464
+          },
+          "metrics": {
+            "total_tokens_in": 80336,
+            "total_tokens_out": 45064,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 0,
+            "cost_usd": 0.916968,
+            "revision_cycles": 0,
+            "articles_generated": 50,
+            "successful_requests": 0,
+            "total_time_seconds": 827.298,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 16.378,
+            "latency_per_batch_max": 22.102,
+            "batches_aborted": 0
+          }
+        },
+        {
+          "run_dir": "runs/experiment/baseline_prompt/run_2",
+          "status": "completed",
+          "consolidation": {
+            "articles": 50,
+            "input_interactions": 50,
+            "consolidation_ratio": 1.0,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 0
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11165364673552094,
+            "reference_similarity_max_avg": 0.42923162905955115
+          },
+          "metrics": {
+            "total_tokens_in": 80336,
+            "total_tokens_out": 45358,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 0,
+            "cost_usd": 0.921378,
+            "revision_cycles": 0,
+            "articles_generated": 50,
+            "successful_requests": 0,
+            "total_time_seconds": 826.648,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 16.366500000000002,
+            "latency_per_batch_max": 20.9,
+            "batches_aborted": 0
+          }
+        },
+        {
+          "run_dir": "runs/experiment/baseline_prompt/run_3",
+          "status": "completed",
+          "consolidation": {
+            "articles": 50,
+            "input_interactions": 50,
+            "consolidation_ratio": 1.0,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 0
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.10960687327246109,
+            "reference_similarity_max_avg": 0.42607539141332973
+          },
+          "metrics": {
+            "total_tokens_in": 80336,
+            "total_tokens_out": 44283,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 0,
+            "cost_usd": 0.905253,
+            "revision_cycles": 0,
+            "articles_generated": 50,
+            "successful_requests": 0,
+            "total_time_seconds": 814.08,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 16.081,
+            "latency_per_batch_max": 22.242,
+            "batches_aborted": 0
+          }
+        }
+      ]
+    },
+    "crewai": {
+      "framework": "crewai",
+      "ablation": null,
+      "n_runs": 3,
+      "consolidation": {
+        "articles_avg": 52.333333333333336,
+        "consolidation_ratio_avg": 0.9554910498306725,
+        "interaction_coverage_pct_avg": 98.66666666666667,
+        "topical_overlap_pairs_gt_0_7_avg": 2.3333333333333335
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 0.9641523221711901,
+        "reference_similarity_avg": 0.12018311429426705,
+        "reference_similarity_max_avg": 0.41984682002584667
+      },
+      "engineering": {
+        "n_runs": 3,
+        "latency_seconds": {
+          "median": 15742.243,
+          "p90": 16507.1182,
+          "min": 15660.353,
+          "max": 16698.337
+        },
+        "cost_usd": {
+          "median": 27.059577,
+          "total": 81.579384
+        },
+        "tool_calls_avg": 687.3333333333334,
+        "failure_rate_pct": 0.0,
+        "loc": 932
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment/crewai/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 52,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.9615384615384616,
+            "interaction_coverage_pct": 98.0,
+            "topical_overlap_pairs_gt_0_7": 2
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 0.965427627927628,
+            "reference_similarity_avg": 0.11833547184684867,
+            "reference_similarity_max_avg": 0.42017345255144734
+          },
+          "metrics": {
+            "total_tokens_in": 4491529,
+            "total_tokens_out": 905666,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 686,
+            "cost_usd": 27.059577,
+            "revision_cycles": 56,
+            "articles_generated": 52,
+            "successful_requests": 1004,
+            "total_time_seconds": 15660.353,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 295.93100000000004,
+            "latency_per_batch_max": 530.93,
+            "batches_aborted": 0
+          }
+        },
+        {
+          "run_dir": "runs/experiment/crewai/run_2",
+          "status": "completed",
+          "consolidation": {
+            "articles": 52,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.9615384615384616,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 3
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 0.9670787545787545,
+            "reference_similarity_avg": 0.1197606554463177,
+            "reference_similarity_max_avg": 0.42350017538280493
+          },
+          "metrics": {
+            "total_tokens_in": 4459447,
+            "total_tokens_out": 908929,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 684,
+            "cost_usd": 27.012276,
+            "revision_cycles": 54,
+            "articles_generated": 52,
+            "successful_requests": 998,
+            "total_time_seconds": 15742.243,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 297.6975,
+            "latency_per_batch_max": 567.002,
+            "batches_aborted": 0
+          }
+        },
+        {
+          "run_dir": "runs/experiment/crewai/run_3",
+          "status": "completed",
+          "consolidation": {
+            "articles": 53,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.9433962264150944,
+            "interaction_coverage_pct": 98.0,
+            "topical_overlap_pairs_gt_0_7": 2
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 0.9599505840071876,
+            "reference_similarity_avg": 0.1224532155896348,
+            "reference_similarity_max_avg": 0.4158668321432878
+          },
+          "metrics": {
+            "total_tokens_in": 4500427,
+            "total_tokens_out": 933750,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 692,
+            "cost_usd": 27.507531,
+            "revision_cycles": 56,
+            "articles_generated": 53,
+            "successful_requests": 1018,
+            "total_time_seconds": 16698.337,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 303.9825,
+            "latency_per_batch_max": 819.038,
+            "batches_aborted": 1
+          }
+        }
+      ]
+    },
+    "langgraph": {
+      "framework": "langgraph",
+      "ablation": null,
+      "n_runs": 3,
+      "consolidation": {
+        "articles_avg": 52.666666666666664,
+        "consolidation_ratio_avg": 0.949667616334283,
+        "interaction_coverage_pct_avg": 86.66666666666667,
+        "topical_overlap_pairs_gt_0_7_avg": 5.333333333333333
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 1.0,
+        "reference_similarity_avg": 0.1158886343655759,
+        "reference_similarity_max_avg": 0.4101500210724525
+      },
+      "engineering": {
+        "n_runs": 3,
+        "latency_seconds": {
+          "median": 17397.964,
+          "p90": 17724.2896,
+          "min": 16850.432,
+          "max": 17805.871
+        },
+        "cost_usd": {
+          "median": 28.097698,
+          "total": 85.138599
+        },
+        "tool_calls_avg": 1963.6666666666667,
+        "failure_rate_pct": 0.0,
+        "loc": 831
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment/langgraph/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 52,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.9615384615384616,
+            "interaction_coverage_pct": 88.0,
+            "topical_overlap_pairs_gt_0_7": 5
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11705582692316498,
+            "reference_similarity_max_avg": 0.41798653485487414
+          },
+          "metrics": {
+            "total_tokens_in": 2468162,
+            "total_tokens_out": 1156374,
+            "cache_read_tokens": 2816999,
+            "cache_creation_tokens": 1049597,
+            "total_tool_calls": 2049,
+            "cost_usd": 29.531184,
+            "revision_cycles": 52,
+            "articles_generated": 52,
+            "successful_requests": 0,
+            "total_time_seconds": 17805.871,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 294.5775,
+            "latency_per_batch_max": 920.704,
+            "batches_aborted": 2
+          }
+        },
+        {
+          "run_dir": "runs/experiment/langgraph/run_2",
+          "status": "completed",
+          "consolidation": {
+            "articles": 52,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.9615384615384616,
+            "interaction_coverage_pct": 90.0,
+            "topical_overlap_pairs_gt_0_7": 5
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11575447738402396,
+            "reference_similarity_max_avg": 0.41964710957937573
+          },
+          "metrics": {
+            "total_tokens_in": 2371550,
+            "total_tokens_out": 1096755,
+            "cache_read_tokens": 2705986,
+            "cache_creation_tokens": 991981,
+            "total_tool_calls": 1914,
+            "cost_usd": 28.097698,
+            "revision_cycles": 48,
+            "articles_generated": 52,
+            "successful_requests": 0,
+            "total_time_seconds": 17397.964,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 280.646,
+            "latency_per_batch_max": 917.02,
+            "batches_aborted": 2
+          }
+        },
+        {
+          "run_dir": "runs/experiment/langgraph/run_3",
+          "status": "completed",
+          "consolidation": {
+            "articles": 54,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.9259259259259259,
+            "interaction_coverage_pct": 82.0,
+            "topical_overlap_pairs_gt_0_7": 6
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11485559878953876,
+            "reference_similarity_max_avg": 0.39281641878310786
+          },
+          "metrics": {
+            "total_tokens_in": 2313976,
+            "total_tokens_out": 1071617,
+            "cache_read_tokens": 2611864,
+            "cache_creation_tokens": 989326,
+            "total_tool_calls": 1928,
+            "cost_usd": 27.509717,
+            "revision_cycles": 45,
+            "articles_generated": 54,
+            "successful_requests": 0,
+            "total_time_seconds": 16850.432,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 299.246,
+            "latency_per_batch_max": 923.809,
+            "batches_aborted": 8
+          }
+        }
+      ]
+    },
+    "openai_agents": {
+      "framework": "openai_agents",
+      "ablation": null,
+      "n_runs": 3,
+      "consolidation": {
+        "articles_avg": 57.0,
+        "consolidation_ratio_avg": 0.8773730302768414,
+        "interaction_coverage_pct_avg": 99.33333333333333,
+        "topical_overlap_pairs_gt_0_7_avg": 6.0
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 0.9983702725989477,
+        "reference_similarity_avg": 0.11405315988489369,
+        "reference_similarity_max_avg": 0.4042798808880847
+      },
+      "engineering": {
+        "n_runs": 3,
+        "latency_seconds": {
+          "median": 14863.225,
+          "p90": 15382.090600000001,
+          "min": 14168.391,
+          "max": 15511.807
+        },
+        "cost_usd": {
+          "median": 27.168744,
+          "total": 81.950265
+        },
+        "tool_calls_avg": 1206,
+        "failure_rate_pct": 0.0,
+        "loc": 803
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/experiment/openai_agents/run_1",
+          "status": "completed",
+          "consolidation": {
+            "articles": 58,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.8620689655172413,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 8
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 0.9968652037617555,
+            "reference_similarity_avg": 0.11358628184296984,
+            "reference_similarity_max_avg": 0.3995730209658554
+          },
+          "metrics": {
+            "total_tokens_in": 4372030,
+            "total_tokens_out": 972947,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 1229,
+            "cost_usd": 27.710295,
+            "revision_cycles": 9,
+            "articles_generated": 58,
+            "successful_requests": 775,
+            "total_time_seconds": 14863.225,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 241.64100000000002,
+            "latency_per_batch_max": 762.236,
+            "batches_aborted": 0
+          }
+        },
+        {
+          "run_dir": "runs/experiment/openai_agents/run_2",
+          "status": "completed",
+          "consolidation": {
+            "articles": 57,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.8771929824561403,
+            "interaction_coverage_pct": 98.0,
+            "topical_overlap_pairs_gt_0_7": 3
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 0.9982456140350877,
+            "reference_similarity_avg": 0.11418669416054658,
+            "reference_similarity_max_avg": 0.4088453442269264
+          },
+          "metrics": {
+            "total_tokens_in": 4247472,
+            "total_tokens_out": 955254,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 1212,
+            "cost_usd": 27.071226,
+            "revision_cycles": 8,
+            "articles_generated": 57,
+            "successful_requests": 768,
+            "total_time_seconds": 15511.807,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 244.012,
+            "latency_per_batch_max": 930.163,
+            "batches_aborted": 2
+          }
+        },
+        {
+          "run_dir": "runs/experiment/openai_agents/run_3",
+          "status": "completed",
+          "consolidation": {
+            "articles": 56,
+            "input_interactions": 50,
+            "consolidation_ratio": 0.8928571428571429,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 7
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.11438650365116466,
+            "reference_similarity_max_avg": 0.4044212774714722
+          },
+          "metrics": {
+            "total_tokens_in": 4325358,
+            "total_tokens_out": 946178,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 1177,
+            "cost_usd": 27.168744,
+            "revision_cycles": 9,
+            "articles_generated": 56,
+            "successful_requests": 772,
+            "total_time_seconds": 14168.391,
+            "batch_count": 50,
+            "batch_size": 1,
+            "latency_per_batch_median": 236.192,
+            "latency_per_batch_max": 824.982,
+            "batches_aborted": 0
+          }
+        }
+      ]
+    }
+  },
+  "reference_articles_count": 118,
+  "input_corpus_total": 183
+}

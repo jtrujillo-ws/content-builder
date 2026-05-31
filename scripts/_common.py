@@ -195,6 +195,53 @@ def _runner_subprocess_entry(
         pass
 
 
+def _ensure_std_fds(log: Optional[logging.Logger] = None) -> List[int]:
+    """Garantiza que los descriptores estándar (0=stdin, 1=stdout, 2=stderr)
+    sean válidos antes de lanzar un subproceso con `mp.spawn`.
+
+    Contexto del bug (openai_agents, run 2026-05-29): tras ~12 lotes el proceso
+    padre quedaba con `fd 0` (stdin) inválido. `mp.spawn` re-ejecuta `python` y
+    el hijo intenta inicializar `sys.stdin/stdout/stderr` desde los fds 0/1/2
+    heredados; si uno está cerrado, el intérprete aborta en el arranque con
+    `Fatal Python error: init_sys_streams: can't initialize sys standard
+    streams / OSError: [Errno 9] Bad file descriptor` y el lote muere con
+    exitcode=1 sin escribir resultado (síntoma: `subprocess_died_no_result`).
+    Una vez roto el fd del padre, TODOS los lotes siguientes —y las repeticiones
+    posteriores, que comparten el mismo proceso padre— fallan en cascada.
+
+    Esta guarda detecta cualquier fd estándar inválido y lo re-abre contra
+    `/dev/null` (lectura para 0, escritura para 1/2), de modo que el hijo
+    siempre pueda inicializar sus streams. Solo toca fds que ya están rotos;
+    los válidos se dejan intactos para no perder el logging del padre.
+
+    Devuelve la lista de fds que se tuvieron que reparar (vacía en el caso sano).
+    """
+    repaired: List[int] = []
+    for fd, flags in ((0, os.O_RDONLY), (1, os.O_WRONLY), (2, os.O_WRONLY)):
+        try:
+            os.fstat(fd)
+            continue  # fd válido — no tocar.
+        except OSError:
+            pass
+        try:
+            new_fd = os.open(os.devnull, flags)
+            if new_fd != fd:
+                os.dup2(new_fd, fd)
+                os.close(new_fd)
+            repaired.append(fd)
+        except OSError:
+            # Si ni siquiera /dev/null abre, no hay nada más que hacer aquí;
+            # el lote fallará y quedará registrado como crashed.
+            pass
+    if repaired and log is not None:
+        log.warning(
+            "Descriptores estándar inválidos reparados contra /dev/null: %s "
+            "(prevención de init_sys_streams en el subproceso spawn).",
+            repaired,
+        )
+    return repaired
+
+
 def _empty_batch_record(
     b_idx: int, batch_ids: List[str], status: str, elapsed: float
 ) -> Dict[str, Any]:
@@ -323,6 +370,12 @@ def run_in_batches(
         os.close(tmp_fd)
         Path(result_path).unlink(missing_ok=True)
 
+        # Antes de cada spawn, garantizar que fds 0/1/2 sean válidos: el hijo
+        # los hereda e inicializa sus streams estándar desde ellos. Un fd
+        # estándar roto en el padre tumba al hijo en el arranque del intérprete
+        # (init_sys_streams) y rompe en cascada todos los lotes restantes.
+        _ensure_std_fds(log)
+
         proc = mp_ctx.Process(
             target=_runner_subprocess_entry,
             args=(framework_name, batch_ids, auto_approve, result_path),
@@ -364,6 +417,14 @@ def run_in_batches(
             proc.join()
         finally:
             watchdog.cancel()
+            # Capturar exitcode antes de cerrar y liberar el fd centinela del
+            # Process de forma determinista (no depender del GC). Evita
+            # acumulación de fds a lo largo de los lotes.
+            proc_exitcode = proc.exitcode
+            try:
+                proc.close()
+            except (ValueError, AttributeError):
+                pass
         elapsed = round(time.time() - t0, 3)
 
         if timeout_flag.is_set():
@@ -394,14 +455,14 @@ def run_in_batches(
             log.error(
                 "Lote %d: subproceso salió (exitcode=%s) sin escribir resultado.",
                 b_idx,
-                proc.exitcode,
+                proc_exitcode,
             )
             agg_errors.append(
                 {
                     "phase": "batch_runner",
                     "batch_idx": b_idx,
                     "batch_ids": batch_ids,
-                    "error": f"subprocess_died_no_result: exitcode={proc.exitcode}",
+                    "error": f"subprocess_died_no_result: exitcode={proc_exitcode}",
                     "elapsed_seconds": elapsed,
                     "ts": _now_iso(),
                 }
