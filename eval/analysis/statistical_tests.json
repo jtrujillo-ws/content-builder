@@ -1,0 +1,635 @@
+{
+  "n_records": 64,
+  "n_interactions": 16,
+  "frameworks": [
+    "langgraph",
+    "crewai",
+    "openai_agents",
+    "baseline_prompt"
+  ],
+  "dimensions": [
+    "claridad",
+    "exactitud",
+    "completitud",
+    "accionabilidad",
+    "consistencia"
+  ],
+  "alpha": 0.05,
+  "descriptive": {
+    "langgraph": {
+      "claridad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.125,
+        "std": 0.331,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "exactitud": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.188,
+        "std": 0.39,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "completitud": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.25,
+        "std": 0.433,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "accionabilidad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.125,
+        "std": 0.331,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "consistencia": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.062,
+        "std": 0.242,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "_overall": {
+        "mean": 4.15,
+        "median": 4.0,
+        "std": 0.357
+      }
+    },
+    "crewai": {
+      "claridad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.312,
+        "std": 0.583,
+        "min": 3.0,
+        "max": 5.0
+      },
+      "exactitud": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.375,
+        "std": 0.599,
+        "min": 3.0,
+        "max": 5.0
+      },
+      "completitud": {
+        "n": 16,
+        "median": 5.0,
+        "mean": 4.562,
+        "std": 0.496,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "accionabilidad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.312,
+        "std": 0.583,
+        "min": 3.0,
+        "max": 5.0
+      },
+      "consistencia": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.375,
+        "std": 0.484,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "_overall": {
+        "mean": 4.388,
+        "median": 4.0,
+        "std": 0.559
+      }
+    },
+    "openai_agents": {
+      "claridad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.188,
+        "std": 0.39,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "exactitud": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.312,
+        "std": 0.464,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "completitud": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.438,
+        "std": 0.496,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "accionabilidad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.062,
+        "std": 0.242,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "consistencia": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.125,
+        "std": 0.331,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "_overall": {
+        "mean": 4.225,
+        "median": 4.0,
+        "std": 0.418
+      }
+    },
+    "baseline_prompt": {
+      "claridad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.125,
+        "std": 0.331,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "exactitud": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.188,
+        "std": 0.39,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "completitud": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.125,
+        "std": 0.331,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "accionabilidad": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.188,
+        "std": 0.39,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "consistencia": {
+        "n": 16,
+        "median": 4.0,
+        "mean": 4.125,
+        "std": 0.331,
+        "min": 4.0,
+        "max": 5.0
+      },
+      "_overall": {
+        "mean": 4.15,
+        "median": 4.0,
+        "std": 0.357
+      }
+    }
+  },
+  "friedman_by_dimension": {
+    "claridad": {
+      "friedman_chi2": 2.4,
+      "p_value": 0.4936346227117393,
+      "significant": false,
+      "kendall_w": 0.05,
+      "kendall_w_interpretacion": "acuerdo muy débil",
+      "avg_ranks": {
+        "langgraph": 2.625,
+        "crewai": 2.25,
+        "openai_agents": 2.5,
+        "baseline_prompt": 2.625
+      },
+      "n_blocks": 16,
+      "k_treatments": 4
+    },
+    "exactitud": {
+      "friedman_chi2": 2.1325,
+      "p_value": 0.5453597833235084,
+      "significant": false,
+      "kendall_w": 0.0444,
+      "kendall_w_interpretacion": "acuerdo muy débil",
+      "avg_ranks": {
+        "langgraph": 2.656,
+        "crewai": 2.25,
+        "openai_agents": 2.438,
+        "baseline_prompt": 2.656
+      },
+      "n_blocks": 16,
+      "k_treatments": 4
+    },
+    "completitud": {
+      "friedman_chi2": 6.6923,
+      "p_value": 0.08237920359884364,
+      "significant": false,
+      "kendall_w": 0.1394,
+      "kendall_w_interpretacion": "acuerdo débil",
+      "avg_ranks": {
+        "langgraph": 2.688,
+        "crewai": 2.062,
+        "openai_agents": 2.312,
+        "baseline_prompt": 2.938
+      },
+      "n_blocks": 16,
+      "k_treatments": 4
+    },
+    "accionabilidad": {
+      "friedman_chi2": 4.2,
+      "p_value": 0.2406618852096152,
+      "significant": false,
+      "kendall_w": 0.0875,
+      "kendall_w_interpretacion": "acuerdo muy débil",
+      "avg_ranks": {
+        "langgraph": 2.594,
+        "crewai": 2.219,
+        "openai_agents": 2.719,
+        "baseline_prompt": 2.469
+      },
+      "n_blocks": 16,
+      "k_treatments": 4
+    },
+    "consistencia": {
+      "friedman_chi2": 6.1034,
+      "p_value": 0.10668428898365087,
+      "significant": false,
+      "kendall_w": 0.1272,
+      "kendall_w_interpretacion": "acuerdo débil",
+      "avg_ranks": {
+        "langgraph": 2.719,
+        "crewai": 2.094,
+        "openai_agents": 2.594,
+        "baseline_prompt": 2.594
+      },
+      "n_blocks": 16,
+      "k_treatments": 4
+    }
+  },
+  "automatic_metrics": {
+    "langgraph": {
+      "simK": 41.02,
+      "kcs_pct": 100.0,
+      "evidence_pct": 100.0,
+      "coverage_pct": 86.7,
+      "cost_usd": 28.098,
+      "tool_calls": 1963.7,
+      "latency_s": 17398.0,
+      "loc": 831
+    },
+    "crewai": {
+      "simK": 41.98,
+      "kcs_pct": 100.0,
+      "evidence_pct": 96.4,
+      "coverage_pct": 98.7,
+      "cost_usd": 27.06,
+      "tool_calls": 687.3,
+      "latency_s": 15742.2,
+      "loc": 932
+    },
+    "openai_agents": {
+      "simK": 40.43,
+      "kcs_pct": 100.0,
+      "evidence_pct": 99.8,
+      "coverage_pct": 99.3,
+      "cost_usd": 27.169,
+      "tool_calls": 1206,
+      "latency_s": 14863.2,
+      "loc": 803
+    },
+    "baseline_prompt": {
+      "simK": 42.84,
+      "kcs_pct": 100.0,
+      "evidence_pct": 100.0,
+      "coverage_pct": 100.0,
+      "cost_usd": 0.917,
+      "tool_calls": 0,
+      "latency_s": 826.6,
+      "loc": 340
+    }
+  },
+  "correlations_human_vs_auto": {
+    "simK": {
+      "spearman_rho": -0.211,
+      "spearman_p": 0.7892,
+      "pearson_r": 0.036,
+      "pearson_p": 0.964,
+      "human_means": {
+        "langgraph": 4.15,
+        "crewai": 4.388,
+        "openai_agents": 4.225,
+        "baseline_prompt": 4.15
+      },
+      "auto_values": {
+        "langgraph": 41.02,
+        "crewai": 41.98,
+        "openai_agents": 40.43,
+        "baseline_prompt": 42.84
+      },
+      "n": 4
+    },
+    "cost_usd": {
+      "spearman_rho": -0.105,
+      "spearman_p": 0.8946,
+      "pearson_r": 0.44,
+      "pearson_p": 0.5604,
+      "human_means": {
+        "langgraph": 4.15,
+        "crewai": 4.388,
+        "openai_agents": 4.225,
+        "baseline_prompt": 4.15
+      },
+      "auto_values": {
+        "langgraph": 28.098,
+        "crewai": 27.06,
+        "openai_agents": 27.169,
+        "baseline_prompt": 0.917
+      },
+      "n": 4
+    },
+    "tool_calls": {
+      "spearman_rho": -0.105,
+      "spearman_p": 0.8946,
+      "pearson_r": -0.171,
+      "pearson_p": 0.8289,
+      "human_means": {
+        "langgraph": 4.15,
+        "crewai": 4.388,
+        "openai_agents": 4.225,
+        "baseline_prompt": 4.15
+      },
+      "auto_values": {
+        "langgraph": 1963.7,
+        "crewai": 687.3,
+        "openai_agents": 1206,
+        "baseline_prompt": 0
+      },
+      "n": 4
+    },
+    "coverage_pct": {
+      "spearman_rho": -0.105,
+      "spearman_p": 0.8946,
+      "pearson_r": 0.391,
+      "pearson_p": 0.6086,
+      "human_means": {
+        "langgraph": 4.15,
+        "crewai": 4.388,
+        "openai_agents": 4.225,
+        "baseline_prompt": 4.15
+      },
+      "auto_values": {
+        "langgraph": 86.7,
+        "crewai": 98.7,
+        "openai_agents": 99.3,
+        "baseline_prompt": 100.0
+      },
+      "n": 4
+    }
+  },
+  "hypotheses": {
+    "H1": {
+      "statement": "H1: LangGraph tendrá menor tasa de fallos que los otros frameworks.",
+      "failure_rates_pct": {
+        "langgraph": 22.67,
+        "crewai": 1.33,
+        "openai_agents": 2.0
+      },
+      "ranking_menor_a_mayor": [
+        "crewai",
+        "openai_agents",
+        "langgraph"
+      ],
+      "verdict": "REFUTADA",
+      "detail": "LangGraph tiene la tasa de fallo MÁS ALTA (22.67%); la menor es CrewAI (1.33%).",
+      "_raw": {
+        "langgraph": {
+          "errors_total": 34,
+          "batches_total": 150,
+          "errors_per_run": [
+            11,
+            9,
+            14
+          ],
+          "failure_rate_pct": 22.67
+        },
+        "crewai": {
+          "errors_total": 2,
+          "batches_total": 150,
+          "errors_per_run": [
+            1,
+            0,
+            1
+          ],
+          "failure_rate_pct": 1.33
+        },
+        "openai_agents": {
+          "errors_total": 3,
+          "batches_total": 150,
+          "errors_per_run": [
+            0,
+            2,
+            1
+          ],
+          "failure_rate_pct": 2.0
+        }
+      }
+    },
+    "H2": {
+      "statement": "H2: CrewAI tendrá mayor calidad percibida en claridad y accionabilidad.",
+      "by_dimension": {
+        "claridad": {
+          "friedman_chi2": 2.0,
+          "p_value": 0.36787944117144245,
+          "significant": false,
+          "kendall_w": 0.0625,
+          "means": {
+            "langgraph": 4.125,
+            "crewai": 4.312,
+            "openai_agents": 4.188
+          },
+          "best": "crewai",
+          "crewai_is_best": true
+        },
+        "accionabilidad": {
+          "friedman_chi2": 3.7143,
+          "p_value": 0.15611804531597104,
+          "significant": false,
+          "kendall_w": 0.1161,
+          "means": {
+            "langgraph": 4.125,
+            "crewai": 4.312,
+            "openai_agents": 4.062
+          },
+          "best": "crewai",
+          "crewai_is_best": true
+        }
+      },
+      "verdict": "PARCIALMENTE SOPORTADA",
+      "detail": "CrewAI obtiene la media más alta entre los 3 frameworks en ambas dimensiones, pero el Friedman restringido a los 3 frameworks NO alcanza significancia (las diferencias entre frameworks no son estadísticamente concluyentes)."
+    },
+    "H3": {
+      "statement": "H3: Mejor instrumentación → mejor reproducibilidad (menor CV inter-run).",
+      "inter_run_cv": {
+        "langgraph": {
+          "per_metric": {
+            "cost_usd": {
+              "values": [
+                29.531184,
+                28.097698,
+                27.509717
+              ],
+              "mean": 28.38,
+              "sd": 0.849,
+              "cv_pct": 2.99
+            },
+            "tool_calls": {
+              "values": [
+                2049,
+                1914,
+                1928
+              ],
+              "mean": 1963.667,
+              "sd": 60.61,
+              "cv_pct": 3.09
+            },
+            "articles": {
+              "values": [
+                52,
+                52,
+                54
+              ],
+              "mean": 52.667,
+              "sd": 0.943,
+              "cv_pct": 1.79
+            },
+            "errors": {
+              "values": [
+                11,
+                9,
+                14
+              ],
+              "mean": 11.333,
+              "sd": 2.055,
+              "cv_pct": 18.13
+            }
+          },
+          "mean_cv_pct": 2.62
+        },
+        "crewai": {
+          "per_metric": {
+            "cost_usd": {
+              "values": [
+                27.059577,
+                27.012276,
+                27.507531
+              ],
+              "mean": 27.193,
+              "sd": 0.223,
+              "cv_pct": 0.82
+            },
+            "tool_calls": {
+              "values": [
+                686,
+                684,
+                692
+              ],
+              "mean": 687.333,
+              "sd": 3.399,
+              "cv_pct": 0.49
+            },
+            "articles": {
+              "values": [
+                52,
+                52,
+                53
+              ],
+              "mean": 52.333,
+              "sd": 0.471,
+              "cv_pct": 0.9
+            },
+            "errors": {
+              "values": [
+                1,
+                0,
+                1
+              ],
+              "mean": 0.667,
+              "sd": 0.471,
+              "cv_pct": 70.71
+            }
+          },
+          "mean_cv_pct": 0.74
+        },
+        "openai_agents": {
+          "per_metric": {
+            "cost_usd": {
+              "values": [
+                27.710295,
+                27.071226,
+                27.168744
+              ],
+              "mean": 27.317,
+              "sd": 0.281,
+              "cv_pct": 1.03
+            },
+            "tool_calls": {
+              "values": [
+                1229,
+                1212,
+                1177
+              ],
+              "mean": 1206,
+              "sd": 21.649,
+              "cv_pct": 1.8
+            },
+            "articles": {
+              "values": [
+                58,
+                57,
+                56
+              ],
+              "mean": 57,
+              "sd": 0.816,
+              "cv_pct": 1.43
+            },
+            "errors": {
+              "values": [
+                0,
+                2,
+                1
+              ],
+              "mean": 1,
+              "sd": 0.816,
+              "cv_pct": 81.65
+            }
+          },
+          "mean_cv_pct": 1.42
+        }
+      },
+      "most_reproducible": "crewai",
+      "verdict": "EVALUADA (parcial)",
+      "detail": "CrewAI es el más reproducible (CV medio 0.74%). Nota: la 'instrumentación' no se midió como variable independiente; se reporta la reproducibilidad (CV) como evidencia observacional, no causal."
+    },
+    "H4": {
+      "statement": "H4: La presencia de evidence pack mejora la exactitud.",
+      "verdict": "NO EVALUADA",
+      "detail": "LIMITACIÓN: requiere la ablación `no_evidence` (generar artículos sin evidence pack y comparar exactitud), que NO se ejecutó en esta batería. El flag `--ablation no_evidence` existe pero sólo se registra en metadata; el wiring en los runners está pendiente. No se puede contrastar con los datos actuales."
+    }
+  }
+}
