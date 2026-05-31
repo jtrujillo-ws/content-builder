@@ -1,0 +1,73 @@
+{
+  "runs_root": "runs/calibration",
+  "frameworks": {
+    "baseline_heuristic": {
+      "framework": "baseline_heuristic",
+      "ablation": null,
+      "n_runs": 1,
+      "consolidation": {
+        "articles_avg": 6.0,
+        "consolidation_ratio_avg": 6.166666666666667,
+        "interaction_coverage_pct_avg": 100.0,
+        "topical_overlap_pairs_gt_0_7_avg": 0.0
+      },
+      "quality": {
+        "kcs_compliance_avg": 1.0,
+        "kcs_fully_compliant_pct_avg": 100.0,
+        "evidence_coverage_avg": 1.0,
+        "reference_similarity_avg": 0.12647389897987743,
+        "reference_similarity_max_avg": 0.45207858206784435
+      },
+      "engineering": {
+        "n_runs": 1,
+        "latency_seconds": {
+          "median": 0.192,
+          "p90": 0.192,
+          "min": 0.192,
+          "max": 0.192
+        },
+        "cost_usd": {
+          "median": 0,
+          "total": 0
+        },
+        "tool_calls_avg": 0,
+        "failure_rate_pct": 0.0,
+        "loc": 282
+      },
+      "per_run": [
+        {
+          "run_dir": "runs/calibration/baseline_heuristic",
+          "status": "completed",
+          "consolidation": {
+            "articles": 6,
+            "input_interactions": 37,
+            "consolidation_ratio": 6.166666666666667,
+            "interaction_coverage_pct": 100.0,
+            "topical_overlap_pairs_gt_0_7": 0
+          },
+          "quality": {
+            "kcs_compliance_avg": 1.0,
+            "kcs_fully_compliant_pct": 100.0,
+            "evidence_coverage_avg": 1.0,
+            "reference_similarity_avg": 0.12647389897987743,
+            "reference_similarity_max_avg": 0.45207858206784435
+          },
+          "metrics": {
+            "total_time_seconds": 0.192,
+            "total_tokens_in": 0,
+            "total_tokens_out": 0,
+            "cache_read_tokens": 0,
+            "cache_creation_tokens": 0,
+            "total_tool_calls": 0,
+            "cost_usd": 0.0,
+            "revision_cycles": 0,
+            "articles_generated": 6,
+            "clusters_built": 6
+          }
+        }
+      ]
+    }
+  },
+  "reference_articles_count": 118,
+  "input_corpus_total": 183
+}

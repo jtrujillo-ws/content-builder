@@ -1,0 +1,16 @@
+06:25:11 [INFO] content-builder: Referencia: 118 artículos en kb_articles.jsonl
+06:25:12 [INFO] content-builder: Resultados guardados en eval/results/reserve_metrics.json
+
+==============================================================================================================
+ MÉTRICAS POR FRAMEWORK
+==============================================================================================================
+framework                    runs  arts  cov%  KCS%   ev%  simK  lat_med  lat_p90   cost$  tools  fail%   LOC
+-------------------------------------------------------------------------------------------------------------
+crewai                          1  37.0 100.0   100    98    38  10916.7  10916.7  18.833    491      0   932
+langgraph                       1  40.0  91.9   100   100    40  11624.6  11624.6  17.286   1207      0   831
+openai_agents                   1  42.0  97.3   100   100    39  11257.7  11257.7  21.342    956      0   803
+
+ Leyenda: arts=artículos promedio, cov%=cobertura interacciones, KCS%=cumplimiento plantilla,
+          ev%=cobertura evidencia, simK%=mejor similitud TF-IDF vs KB referencia,
+          lat_med/p90=latencia (s), cost$=costo mediano, tools=tool calls promedio, LOC=líneas.
+
