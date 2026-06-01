@@ -1,8 +1,8 @@
 # Resultados del experimento
 
 Contenido numérico extraído de `eval/results/`, `eval/analysis/` y
-`runs/experiment/`. Las cifras son exactas (leídas de los archivos). El expermento se hizo sobre el **subset de 50 interacciones del subte de evaluación**, **3 runs por framework**; la validación de robustez es
-sobre el **subet de reserva (37 interacciones), 1 run**.
+`runs/experiment/`. Las cifras son exactas (leídas de los archivos). El experimento se hizo sobre el **subset de 50 interacciones del split de evaluación**, **3 runs por framework**; la validación de robustez es
+sobre el **split de reserva (37 interacciones), 1 run**.
 
 ---
 
@@ -129,7 +129,7 @@ generadores.
 |---|---|---|---|---|---|---|
 | LangGraph | 4.125±0.331 | 4.188±0.390 | 4.250±0.433 | 4.125±0.331 | 4.062±0.242 | 4.150±0.357 |
 | CrewAI | 4.312±0.583 | 4.375±0.599 | 4.562±0.496 | 4.312±0.583 | 4.375±0.484 | 4.388±0.559 |
-| OpenAI | 4.188±0.390 | 4.312±0.464 | 4.438±0.496 | 4.062±0.242 | 4.125±0.33 | 4.225±0.418 |
+| OpenAI | 4.188±0.390 | 4.312±0.464 | 4.438±0.496 | 4.062±0.242 | 4.125±0.331 | 4.225±0.418 |
 | Baseline | 4.125±0.331 | 4.188±0.390 | 4.125±0.331 | 4.188±0.390 | 4.125±0.331 | 4.150±0.357 |
 
 
@@ -141,7 +141,6 @@ generadores.
 | **H1** | LangGraph tendrá menor tasa de fallos | tasa de fallos (errores/lotes): **LangGraph 22.67%**, CrewAI 1.33%, OpenAI 2.00% | ❌ **REFUTADA** (LangGraph es el más alto; el menor es CrewAI) |
 | **H2** | CrewAI mayor calidad en claridad y aplicabilidad | CrewAI tiene la media más alta entre los 3 frameworks en ambas, pero Friedman 3-fw no es significativo | 🟡 **PARCIALMENTE SOPORTADA** (dirección sí, significancia no) |
 | **H3** | Mejor instrumentación → mejor reproducibilidad (CV inter-run) | CV medio (costo/tools/artículos): **CrewAI 0.74%**, OpenAI 1.42%, LangGraph 2.62% | 🟡 **EVALUADA (parcial)**: CrewAI el más reproducible |
-|           |                                                              |                                                              |                                                              |
 
 **H1 — tasa de fallos (errores/lotes, 3 runs × 50 = 150 lotes)**
 
@@ -201,7 +200,7 @@ tool_calls, fallos); los cambios de orden en costo/cobertura ocurren entre valor
 
 ## 8. Ranking por escenario organizacional
 
-Cada escenario prioriza distintas columnas de (Recordatorio: las diferencias de calidad humana no son estadísticamente significativas; los rankings de calidad se basan en medias puntuales.)
+Cada escenario prioriza distintas columnas. (Recordatorio: las diferencias de calidad humana no son estadísticamente significativas; los rankings de calidad se basan en medias puntuales.)
 
 **Escenario A — Prototipado rápido** (prioriza costo, latencia, simplicidad/LOC, reproducibilidad)
 
