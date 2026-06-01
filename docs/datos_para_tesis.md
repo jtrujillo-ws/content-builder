@@ -6,10 +6,10 @@ indicación, el estudio principal es sobre el **subset de 50 interacciones del
 split de evaluación**, **3 runs por generador**; la validación de robustez es
 sobre el **split de reserva (37 interacciones), 1 run**.
 
-> **Nota sobre subpreguntas (SP1–SP5):** el texto exacto de las subpreguntas de
-> investigación no está en el repositorio. En la §10 se proponen 5 subpreguntas
-> **inferidas del diseño experimental** (marcadas como _inferida_); reemplázalas
-> por el enunciado literal de tu documento manteniendo los datos asociados.
+> **Nota sobre SP5:** las subpreguntas SP1–SP5 (§10.1) son las definitivas de la
+> tesis. SP5 (efecto de las ablaciones) **no puede responderse con los datos
+> actuales** porque las ablaciones no se ejecutaron (ver §8.5 y §10.1); se deja
+> documentado como limitación y trabajo futuro.
 
 ---
 
@@ -276,33 +276,96 @@ rankings de calidad se basan en medias puntuales.)
 
 ## 10.1 Respuesta a las subpreguntas (SP1–SP5)
 
-> Subpreguntas **inferidas del diseño experimental** — reemplazar por el enunciado
-> literal de la tesis conservando los datos.
+**SP1 — ¿Qué framework produce artículos de mayor calidad según la rúbrica
+multidimensional, y en qué dimensiones específicas se concentran las diferencias?**
 
-**SP1 (inferida) — ¿Difieren los frameworks en la calidad de los artículos generados?**
-No de forma estadísticamente significativa. Friedman no significativo en las 5
-dimensiones (p = 0.082–0.545; W = 0.044–0.139). KCS 100% y evidencia 96.4–100% en
-todos. Medias humanas: CrewAI 4.388 > OpenAI 4.225 > LangGraph 4.150 = Baseline
-4.150, pero las diferencias caen dentro del ruido.
+Por **media** de la rúbrica humana, **CrewAI** es el de mayor calidad (global
+4.388), seguido de OpenAI (4.225) y LangGraph = Baseline (4.150). Sin embargo,
+**ninguna diferencia es estadísticamente significativa** (Friedman por dimensión:
+p = 0.082–0.545; W de Kendall 0.044–0.139). Donde la separación es mayor —las dos
+dimensiones con p más bajo, más cercanas a significancia— es en **completitud**
+(p = 0.082; CrewAI 4.562 vs LangGraph 4.250 y Baseline 4.125) y **consistencia**
+(p = 0.107; CrewAI 4.375 vs LangGraph 4.062). Es decir: las (no significativas)
+diferencias se concentran en completitud y consistencia, a favor de CrewAI.
+Métricas automáticas de calidad: KCS 100% en todos; evidencia 96.42–100%;
+simK 40.43–42.84 (todas dentro de ±5%).
 
-**SP2 (inferida) — ¿Cuál es el costo de eficiencia de cada framework?**
-Sustancial y muy dispar. Costo mediano por run: LangGraph $28.10, OpenAI $27.17,
-CrewAI $27.06, frente a $0.92 del baseline-prompt. Tool calls: LangGraph 1963.67,
-OpenAI 1206.00, CrewAI 687.33, baseline 0. Latencia por run: 4.1–4.8 h en
-frameworks vs 13.8 min en baseline.
+**SP2 — ¿Qué framework presenta menor tasa de fallos en el flujo completo
+(detección + generación + verificación), y cuáles son los modos de fallo
+predominantes en cada uno?**
 
-**SP3 (inferida) — ¿Difieren en fiabilidad / tasa de fallos?**
-Sí, marcadamente. Tasa de fallos (errores/lotes): LangGraph 22.67% vs CrewAI
-1.33% y OpenAI 2.00%. A nivel de run, los 3 completaron (0% abortos).
+Menor tasa de fallos: **CrewAI 1.33%** (2/150 lotes), seguido de OpenAI 2.00%
+(3/150) y LangGraph 22.67% (34/150). Modos de fallo predominantes (agregado 3 runs):
 
-**SP4 (inferida) — ¿Son reproducibles los resultados (variabilidad inter-run)?**
-Sí, con diferencias. CV medio inter-run sobre costo/tools/artículos: CrewAI 0.74%,
-OpenAI 1.42%, LangGraph 2.62%. CrewAI es el más reproducible.
+| Framework | total | modos de fallo |
+|---|---|---|
+| LangGraph | 34 | 12× `max_revisions_or_unapproved` (ciclo crítico↔generador agotado sin aprobar), 7× `unhandled_error`, 5× `budget_exceeded`, 1× `parse_failed`, 9× no clasificados |
+| OpenAI Agents | 3 | 2× timeout (`timeout_seconds_excedido` + `hard_timeout` en interacciones complejas), 1× `max_revisions_or_unapproved` |
+| CrewAI | 2 | 1× `unhandled_error`, 1× `max_revisions_or_unapproved` |
 
-**SP5 (inferida) — ¿Se sostienen los patrones fuera de la muestra principal?**
-Sí. En el split de reserva (37 int., 1 run) los rankings se mantienen en las
-métricas con separación real (8/8 robustos con umbral 5%); los cambios ocurren
-sólo entre valores casi empatados.
+El modo dominante de LangGraph es el **agotamiento del bucle de verificación sin
+lograr aprobación**, agravado por errores no manejados y cortes de presupuesto; el
+de OpenAI son **timeouts** en interacciones largas; CrewAI casi no falla.
+
+**SP3 — ¿Qué framework requiere menor intervención humana correctiva (no de
+gobernanza), y qué características de la orquestación explican las diferencias?**
+
+> Salvedad: la batería corrió con `--auto-approve` (sin humano en el bucle), por lo
+> que la intervención humana correctiva **no se instrumentó directamente**. Se usan
+> dos proxies: (a) la tasa de fallos (artículos que requerirían reproceso humano) y
+> (b) los **ciclos de revisión automáticos** (iteraciones crítico→generador).
+
+| Framework | ciclos de revisión (3 runs) | por run | tasa de fallos % |
+|---|---|---|---|
+| OpenAI Agents | 26 | 9 / 8 / 9 | 2.00 |
+| LangGraph | 145 | 52 / 48 / 45 | 22.67 |
+| CrewAI | 166 | 56 / 54 / 56 | 1.33 |
+
+Por reproceso potencial (tasa de fallos), **CrewAI y OpenAI** demandarían la menor
+intervención correctiva (1.33% y 2.00%) frente a LangGraph (22.67%). Por
+convergencia de la orquestación, **OpenAI** logra el resultado con muchas menos
+iteraciones de revisión (26 vs ~150): su flujo converge rápido pero con algún
+timeout; CrewAI itera más (166) pero casi nunca falla; LangGraph itera mucho y aun
+así agota revisiones sin aprobar en 12 casos. La característica explicativa es el
+**diseño del lazo de verificación**: el de OpenAI converge en pocas pasadas, el de
+CrewAI es iterativo-pero-estable, y el de LangGraph entra en ciclos de rechazo que
+no siempre cierran.
+
+**SP4 — ¿Cómo se comparan los frameworks en métricas operacionales (latencia,
+costo, tokens, tool calls, complejidad de implementación) y qué trade-offs emergen
+entre calidad y eficiencia?**
+
+| Framework | latencia (s/run) | costo $/run | tokens in/run | tokens out/run | tool calls | LOC |
+|---|---|---|---|---|---|---|
+| LangGraph | 17397.96 | 28.0977 | 2,384,562 | 1,108,248 | 1963.67 | 831 |
+| CrewAI | 15742.24 | 27.0596 | 4,483,801 | 916,115 | 687.33 | 932 |
+| OpenAI Agents | 14863.23 | 27.1687 | 4,314,953 | 958,126 | 1206.00 | 803 |
+| Baseline (prompt) | 826.65 | 0.9170 | 80,336 | 44,901 | 0.00 | 340 |
+
+**Trade-off central:** la calidad percibida es **estadísticamente indistinguible**
+entre generadores (SP1), pero la eficiencia varía en **órdenes de magnitud**: los
+frameworks cuestan ~$27/run y tardan 4–5 h, frente a $0.92 y ~14 min del baseline
+de un solo prompt, que iguala la calidad. Entre frameworks, CrewAI minimiza tool
+calls (687) y maximiza reproducibilidad pero usa más tokens de entrada (4.48 M);
+LangGraph gasta más tokens de salida (1.11 M) y más tool calls (1964) sin ventaja
+de calidad. No emerge un trade-off calidad↔eficiencia favorable a la mayor
+orquestación: a más costo/iteración, **no** hay más calidad medible.
+
+**SP5 — ¿Qué efecto tienen las ablaciones (con/sin RAG, con/sin verificador,
+con/sin memoria, con/sin evidencia obligatoria) sobre la calidad y confiabilidad
+en cada framework?**
+
+**No se puede responder con los datos actuales: las ablaciones no se ejecutaron.**
+El flag `--ablation` contempla `{no_grouping, no_critic, no_evidence, no_memory}`
+(que corresponden, respectivamente, a sin-agrupación, sin-verificador,
+sin-evidencia-obligatoria y sin-memoria; el contraste con/sin RAG no tiene flag
+porque el diseño B no parte de una KB preexistente que recuperar). Salvo
+`no_grouping` (que sólo fuerza `batch_size=1`), las ablaciones se registran en
+metadata pero **no alteran el comportamiento del runner** (wiring pendiente), y
+todos los `experiment_summary.json` tienen `ablation: null`. Queda como
+**limitación y trabajo futuro**: contrastar calidad y confiabilidad con verificador
+desactivado (`no_critic`), evidencia no obligatoria (`no_evidence`) y memoria
+desactivada (`no_memory`) en cada framework.
 
 ## 10.2 Tabla resumen de trade-offs por framework
 
