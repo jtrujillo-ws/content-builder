@@ -3,7 +3,6 @@
   "frameworks": {
     "crewai": {
       "framework": "crewai",
-      "ablation": null,
       "n_runs": 1,
       "consolidation": {
         "articles_avg": 37.0,
@@ -14,9 +13,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 0.9769626769626769,
-        "reference_similarity_avg": 0.11518530899105119,
-        "reference_similarity_max_avg": 0.37888201378755393
+        "evidence_coverage_avg": 0.9769626769626769
       },
       "engineering": {
         "n_runs": 1,
@@ -48,9 +45,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 0.9769626769626769,
-            "reference_similarity_avg": 0.11518530899105119,
-            "reference_similarity_max_avg": 0.37888201378755393
+            "evidence_coverage_avg": 0.9769626769626769
           },
           "metrics": {
             "total_tokens_in": 3161654,
@@ -74,7 +69,6 @@
     },
     "langgraph": {
       "framework": "langgraph",
-      "ablation": null,
       "n_runs": 1,
       "consolidation": {
         "articles_avg": 40.0,
@@ -85,9 +79,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 1.0,
-        "reference_similarity_avg": 0.11021391946429487,
-        "reference_similarity_max_avg": 0.40099760718193
+        "evidence_coverage_avg": 1.0
       },
       "engineering": {
         "n_runs": 1,
@@ -119,9 +111,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11021391946429487,
-            "reference_similarity_max_avg": 0.40099760718193
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 1474217,
@@ -145,7 +135,6 @@
     },
     "openai_agents": {
       "framework": "openai_agents",
-      "ablation": null,
       "n_runs": 1,
       "consolidation": {
         "articles_avg": 42.0,
@@ -156,9 +145,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 1.0,
-        "reference_similarity_avg": 0.11355210801001106,
-        "reference_similarity_max_avg": 0.3916277062712337
+        "evidence_coverage_avg": 1.0
       },
       "engineering": {
         "n_runs": 1,
@@ -190,9 +177,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11355210801001106,
-            "reference_similarity_max_avg": 0.3916277062712337
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 3369899,
@@ -215,6 +200,5 @@
       ]
     }
   },
-  "reference_articles_count": 118,
   "input_corpus_total": 183
 }

@@ -47,31 +47,27 @@ Cada framework recibió las 50 interacciones y decidió de forma autónoma cómo
 agruparlas y cuántos artículos producir. La tabla siguiente resume los promedios
 de tres corridas por generador.
 
-| Framework | Artículos (prom.) | Cobertura % | KCS % | Evidencia % | simK |
-|---|---|---|---|---|---|
-| LangGraph | 52.67 | 86.67 | 100.00 | 100.00 | 41.02 |
-| CrewAI | 52.33 | 98.67 | 100.00 | 96.42 | 41.98 |
-| OpenAI Agents | 57.00 | 99.33 | 100.00 | 99.84 | 40.43 |
-| Baseline (prompt) | 50.00 | 100.00 | 100.00 | 100.00 | 42.84 |
-| Baseline (heurístico) | 50.00 | 100.00 | 100.00 | 100.00 | 36.61 |
+| Framework | Artículos (prom.) | Cobertura % | KCS % | Evidencia % |
+|---|---|---|---|---|
+| LangGraph | 52.67 | 86.67 | 100.00 | 100.00 |
+| CrewAI | 52.33 | 98.67 | 100.00 | 96.42 |
+| OpenAI Agents | 57.00 | 99.33 | 100.00 | 99.84 |
+| Baseline (prompt) | 50.00 | 100.00 | 100.00 | 100.00 |
+| Baseline (heurístico) | 50.00 | 100.00 | 100.00 | 100.00 |
 
 Los tres frameworks consolidaron y dividieron interacciones, por lo que generaron
 entre 52 y 57 artículos a partir de 50 entradas; los baselines produjeron uno por
 interacción. Todos los generadores alcanzaron 100 % de cumplimiento de la plantilla
 KCS. La cobertura de interacciones varió: OpenAI Agents (99.33 %) y CrewAI
 (98.67 %) cubrieron casi todo el insumo, mientras que LangGraph quedó por debajo
-(86.67 %). La cobertura de evidencia fue alta en todos (96.42–100 %). La similitud
-con la KB de referencia (simK) se ubicó en una banda estrecha (40.43–42.84) para
-los frameworks y el baseline de prompt, y más baja para el heurístico (36.61); las
-diferencias de simK entre los cuatro primeros caen dentro del 5 % relativo y no
-permiten distinguirlos.
+(86.67 %). La cobertura de evidencia fue alta en todos (96.42–100 %).
 
 ## 8.3 Evaluación humana
 
 Un evaluador puntuó, de forma ciega y comparativa, 16 interacciones presentadas en
 cuatro versiones cada una (LangGraph, CrewAI, OpenAI y baseline de prompt), para un
 total de 64 artículos, sobre cinco dimensiones en escala 1–5: claridad, exactitud,
-completitud, accionabilidad y consistencia. El orden A/B/C/D se aleatorizó por
+completitud, aplicabilidad y consistencia. El orden A/B/C/D se aleatorizó por
 interacción para preservar el cegado.
 
 Por media global, CrewAI obtuvo la puntuación más alta (4.388), seguido de OpenAI
@@ -85,7 +81,7 @@ dimensión, y en ninguna se rechazó la hipótesis nula (α = 0.05):
 | Claridad | 2.400 | 0.4936 | No | 0.050 |
 | Exactitud | 2.133 | 0.5454 | No | 0.044 |
 | Completitud | 6.692 | 0.0824 | No | 0.139 |
-| Accionabilidad | 4.200 | 0.2407 | No | 0.088 |
+| Aplicabilidad | 4.200 | 0.2407 | No | 0.088 |
 | Consistencia | 6.103 | 0.1067 | No | 0.127 |
 
 Los valores de W de Kendall (0.044–0.139) indican además un acuerdo entre bloques
@@ -97,7 +93,7 @@ interpretación es directa: con la muestra evaluada, **la calidad percibida de l
 cuatro generadores fue estadísticamente indistinguible**, incluido el baseline de
 un solo prompt.
 
-| Framework | Claridad | Exactitud | Completitud | Accionabilidad | Consistencia | Global |
+| Framework | Claridad | Exactitud | Completitud | Aplicabilidad | Consistencia | Global |
 |---|---|---|---|---|---|---|
 | LangGraph | 4.125 | 4.188 | 4.250 | 4.125 | 4.062 | 4.150 |
 | CrewAI | 4.312 | 4.375 | 4.562 | 4.312 | 4.375 | 4.388 |
@@ -132,19 +128,19 @@ Para comprobar que los hallazgos no dependían de la muestra principal, se repli
 el experimento sobre el split de reserva (37 interacciones, una corrida por
 framework). La tabla compara ambos escenarios.
 
-| Framework | Escenario | Artículos | Cobertura % | Evidencia % | simK | Costo $ | Tool calls | Fallos % |
-|---|---|---|---|---|---|---|---|---|
-| LangGraph | principal | 52.67 | 86.67 | 100.00 | 41.02 | 28.10 | 1963.67 | 22.67 |
-| LangGraph | reserva | 40.00 | 91.89 | 100.00 | 40.10 | 17.29 | 1207.00 | 0.00 |
-| CrewAI | principal | 52.33 | 98.67 | 96.42 | 41.98 | 27.06 | 687.33 | 1.33 |
-| CrewAI | reserva | 37.00 | 100.00 | 97.70 | 37.89 | 18.83 | 491.00 | 0.00 |
-| OpenAI | principal | 57.00 | 99.33 | 99.84 | 40.43 | 27.17 | 1206.00 | 2.00 |
-| OpenAI | reserva | 42.00 | 97.30 | 100.00 | 39.16 | 21.34 | 956.00 | 0.00 |
+| Framework | Escenario | Artículos | Cobertura % | Evidencia % | Costo $ | Tool calls | Fallos % |
+|---|---|---|---|---|---|---|---|
+| LangGraph | principal | 52.67 | 86.67 | 100.00 | 28.10 | 1963.67 | 22.67 |
+| LangGraph | reserva | 40.00 | 91.89 | 100.00 | 17.29 | 1207.00 | 0.00 |
+| CrewAI | principal | 52.33 | 98.67 | 96.42 | 27.06 | 687.33 | 1.33 |
+| CrewAI | reserva | 37.00 | 100.00 | 97.70 | 18.83 | 491.00 | 0.00 |
+| OpenAI | principal | 57.00 | 99.33 | 99.84 | 27.17 | 1206.00 | 2.00 |
+| OpenAI | reserva | 42.00 | 97.30 | 100.00 | 21.34 | 956.00 | 0.00 |
 
 Aplicando un criterio de cambio real solo cuando la diferencia entre frameworks
 supera el 5 % relativo en ambos splits, los ordenamientos se mantuvieron en todas
 las métricas con separación efectiva (cumplimiento KCS, evidencia, tool calls,
-tasa de fallos): **8 de 8 rankings se conservaron**. Los cambios de orden en simK,
+tasa de fallos): **7 de 7 rankings se conservaron**. Los cambios de orden en
 costo y cobertura ocurrieron entre valores casi empatados (dentro de ±5 %) y se
 interpretan como ruido. Cabe una salvedad metodológica: la reserva se ejecutó con
 una sola corrida por framework (frente a tres en el principal), por lo que su
@@ -163,12 +159,12 @@ mientras que CrewAI (1.33 %) y OpenAI Agents (2.00 %) se mantuvieron un orden de
 magnitud por debajo. La hipótesis no solo no se sostuvo, sino que se invirtió de
 forma clara.
 
-**H2 — "CrewAI tendrá mayor calidad percibida en claridad y accionabilidad."
+**H2 — "CrewAI tendrá mayor calidad percibida en claridad y aplicabilidad."
 Parcialmente soportada.** CrewAI obtuvo, en efecto, la media más alta entre los
-tres frameworks tanto en claridad (4.312) como en accionabilidad (4.312). Sin
+tres frameworks tanto en claridad (4.312) como en aplicabilidad (4.312). Sin
 embargo, la prueba de Friedman restringida a los tres frameworks no fue
 significativa en ninguna de las dos dimensiones (claridad p = 0.3679;
-accionabilidad p = 0.1561). La dirección coincidió con lo previsto, pero la
+aplicabilidad p = 0.1561). La dirección coincidió con lo previsto, pero la
 evidencia estadística fue insuficiente para confirmarla.
 
 **H3 — "Mejor instrumentación implica mejor reproducibilidad." Evaluada

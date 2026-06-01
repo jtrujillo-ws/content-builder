@@ -29,7 +29,7 @@ FRAMEWORKS = ["langgraph", "crewai", "openai_agents"]
 N_PER_FRAMEWORK = 15
 CONTROL_FW = "baseline_prompt"
 N_CONTROL = 5
-SCORE_DIMS = ["claridad", "exactitud", "completitud", "accionabilidad", "consistencia"]
+SCORE_DIMS = ["claridad", "exactitud", "completitud", "aplicabilidad", "consistencia"]
 
 OUT = PROJECT_ROOT / "eval" / "rubrics" / "human_evaluation.xlsx"
 
@@ -207,13 +207,13 @@ RUBRICA: Dict[str, Dict[str, str]] = {
         "5": "Exhaustivo; incluye canales alternativos, costos, excepciones y requisitos.",
         "_ancla": "Ancla 5: app + sucursal + costo + entrega por correo; Ancla 1: solo menciona 'use la app' sin pasos.",
     },
-    "accionabilidad": {
+    "aplicabilidad": {
         "_def": "¿El usuario puede ejecutar la solución siguiendo el artículo?",
-        "1": "No ofrece pasos accionables.",
+        "1": "No ofrece pasos aplicables.",
         "2": "Pasos vagos o incompletos; el usuario no sabría qué hacer.",
         "3": "Pasos seguibles pero con saltos o supuestos no explicados.",
         "4": "Pasos concretos y ordenados, fáciles de ejecutar.",
-        "5": "Procedimiento perfectamente accionable; sin ambigüedad, con canales y validaciones.",
+        "5": "Procedimiento perfectamente aplicable; sin ambigüedad, con canales y validaciones.",
         "_ancla": "Ancla 5: '1. Abre la App 2. Menú Servicios 3. Certificaciones...'; Ancla 1: 'gestione su certificación' sin más.",
     },
     "consistencia": {
@@ -223,7 +223,7 @@ RUBRICA: Dict[str, Dict[str, str]] = {
         "3": "Estructura presente con alguna incoherencia menor.",
         "4": "Plantilla KCS bien aplicada y coherente.",
         "5": "Plantilla impecable; evidence_pack trazable y metadata consistente con el contenido.",
-        "_ancla": "Ancla 5: cause='No aplica' en howto y resolution accionable; Ancla 1: problem habla de tarjetas y resolution de transferencias.",
+        "_ancla": "Ancla 5: cause='No aplica' en howto y resolution aplicable; Ancla 1: problem habla de tarjetas y resolution de transferencias.",
     },
 }
 

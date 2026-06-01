@@ -38,7 +38,7 @@ AUTO = PROJECT_ROOT / "eval/results/main_metrics.json"
 OUTDIR = PROJECT_ROOT / "eval/analysis"
 FIGDIR = OUTDIR / "figures"
 
-DIMS = ["claridad", "exactitud", "completitud", "accionabilidad", "consistencia"]
+DIMS = ["claridad", "exactitud", "completitud", "aplicabilidad", "consistencia"]
 FRAMEWORKS = ["langgraph", "crewai", "openai_agents", "baseline_prompt"]
 THREE_FW = ["langgraph", "crewai", "openai_agents"]  # sin baseline (H2/H3)
 FW_SHORT = {"langgraph": "LangGraph", "crewai": "CrewAI",
@@ -207,9 +207,7 @@ def auto_metrics() -> Dict[str, Dict[str, float]]:
         q = e.get("quality", {}) or {}
         eng = e.get("engineering", {}) or {}
         cons = e.get("consolidation", {}) or {}
-        sim = q.get("reference_similarity_max_avg")
         out[fw] = {
-            "simK": round((sim or 0) * 100, 2) if sim is not None else None,
             "kcs_pct": round((q.get("kcs_compliance_avg") or 0) * 100, 1),
             "evidence_pct": round((q.get("evidence_coverage_avg") or 0) * 100, 1),
             "coverage_pct": round(cons.get("interaction_coverage_pct_avg") or 0, 1),
@@ -224,7 +222,7 @@ def auto_metrics() -> Dict[str, Dict[str, float]]:
 def correlations(desc, autom) -> Dict[str, Any]:
     human = [desc[fw]["_overall"]["mean"] for fw in FRAMEWORKS]
     out = {}
-    for metric in ["simK", "cost_usd", "tool_calls", "coverage_pct"]:
+    for metric in ["cost_usd", "tool_calls", "coverage_pct"]:
         auto_vals = [autom[fw][metric] for fw in FRAMEWORKS]
         if any(v is None for v in auto_vals):
             continue
@@ -262,13 +260,13 @@ def fig_boxplots(records):
 
 
 def fig_radar(desc, autom):
-    # 8 ejes: 5 humanas (mean) + 3 automáticas clave. Normalización min-max por eje
-    # (dirección: mayor=mejor; cost y tool_calls invertidos).
-    axes_labels = DIMS + ["simK", "efic_costo", "efic_tools"]
+    # 7 ejes: 5 humanas (mean) + 2 automáticas de eficiencia. Normalización min-max
+    # por eje (dirección: mayor=mejor; cost y tool_calls invertidos).
+    axes_labels = DIMS + ["efic_costo", "efic_tools"]
     raw = {}
     for fw in FRAMEWORKS:
         vals = [desc[fw][d]["mean"] for d in DIMS]
-        vals += [autom[fw]["simK"], -autom[fw]["cost_usd"], -autom[fw]["tool_calls"]]
+        vals += [-autom[fw]["cost_usd"], -autom[fw]["tool_calls"]]
         raw[fw] = vals
     arr = np.array([raw[fw] for fw in FRAMEWORKS], dtype=float)
     mn, mx = arr.min(axis=0), arr.max(axis=0)
@@ -421,17 +419,17 @@ def evaluate_hypotheses(records, desc) -> Dict[str, Any]:
                   f"LangGraph tiene la menor tasa de fallo ({fr['langgraph']['failure_rate_pct']}%).",
         "_raw": fr,
     }
-    # H2: CrewAI mayor calidad en claridad y accionabilidad (3 frameworks)
+    # H2: CrewAI mayor calidad en claridad y aplicabilidad (3 frameworks)
     h2_dims = {}
     direction_ok = True
-    for d in ["claridad", "accionabilidad"]:
+    for d in ["claridad", "aplicabilidad"]:
         sub = friedman_subset(records, THREE_FW, d)
         crewai_best = sub["best"] == "crewai"
         direction_ok = direction_ok and crewai_best
         h2_dims[d] = {**sub, "crewai_is_best": crewai_best}
     any_sig = any(h2_dims[d]["significant"] for d in h2_dims)
     h2 = {
-        "statement": "H2: CrewAI tendrá mayor calidad percibida en claridad y accionabilidad.",
+        "statement": "H2: CrewAI tendrá mayor calidad percibida en claridad y aplicabilidad.",
         "by_dimension": h2_dims,
         "verdict": ("SOPORTADA" if direction_ok and any_sig else
                     "PARCIALMENTE SOPORTADA" if direction_ok else "REFUTADA"),
@@ -518,11 +516,11 @@ def write_tables(desc, friedman, autom, corr, hyp, n_records):
         L.append("_Ninguna dimensión alcanzó significancia en Friedman (p<0.05); sin post-hoc._\n")
 
     L.append("## 3. Tabla consolidada — calidad humana + eficiencia automática\n")
-    L.append("| framework | humano global | simK | KCS% | evid% | cobertura% | costo$ | tool_calls | LOC |")
-    L.append("|---|---|---|---|---|---|---|---|---|")
+    L.append("| framework | humano global | KCS% | evid% | cobertura% | costo$ | tool_calls | LOC |")
+    L.append("|---|---|---|---|---|---|---|---|")
     for fw in FRAMEWORKS:
         a = autom[fw]; ov = desc[fw]["_overall"]["mean"]
-        L.append(f"| {FW_SHORT[fw]} | {ov:.2f} | {a['simK']} | {a['kcs_pct']} | {a['evidence_pct']} | "
+        L.append(f"| {FW_SHORT[fw]} | {ov:.2f} | {a['kcs_pct']} | {a['evidence_pct']} | "
                  f"{a['coverage_pct']} | {a['cost_usd']} | {a['tool_calls']} | {a['loc']} |")
     L.append("")
 
@@ -538,7 +536,7 @@ def write_tables(desc, friedman, autom, corr, hyp, n_records):
 
     L.append("## 5. Figuras\n")
     L.append("- `figures/boxplots_dimensions.png` — distribución por dimensión × framework")
-    L.append("- `figures/radar_comparative.png` — 5 dim. humanas + 3 métricas automáticas (normalizado)")
+    L.append("- `figures/radar_comparative.png` — 5 dim. humanas + 2 métricas de eficiencia (normalizado)")
     L.append("- `figures/heatmap_interaction_framework.png` — media por interacción × framework\n")
 
     L.append("## 6. Contraste de hipótesis H1–H4\n")
@@ -559,7 +557,7 @@ def write_tables(desc, friedman, autom, corr, hyp, n_records):
     L.append(f"*{h2['statement']}*\n")
     L.append("| dimensión | medias (LG / CW / OA) | mejor 3-fw | Friedman p (3-fw) | sig. |")
     L.append("|---|---|---|---|---|")
-    for d in ["claridad", "accionabilidad"]:
+    for d in ["claridad", "aplicabilidad"]:
         s = h2["by_dimension"][d]
         m = s["means"]
         L.append(f"| {d} | {m['langgraph']:.2f} / {m['crewai']:.2f} / {m['openai_agents']:.2f} | "

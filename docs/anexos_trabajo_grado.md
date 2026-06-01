@@ -88,17 +88,17 @@ _¿Cubre toda la información necesaria para resolver el caso?_
 
 **Ejemplos ancla:** Ancla 5: app + sucursal + costo + entrega por correo; Ancla 1: solo menciona 'use la app' sin pasos.
 
-### Accionabilidad
+### Aplicabilidad
 
 _¿El usuario puede ejecutar la solución siguiendo el artículo?_
 
 | Nivel | Descripción |
 |---|---|
-| 1 | No ofrece pasos accionables. |
+| 1 | No ofrece pasos aplicables. |
 | 2 | Pasos vagos o incompletos; el usuario no sabría qué hacer. |
 | 3 | Pasos seguibles pero con saltos o supuestos no explicados. |
 | 4 | Pasos concretos y ordenados, fáciles de ejecutar. |
-| 5 | Procedimiento perfectamente accionable; sin ambigüedad, con canales y validaciones. |
+| 5 | Procedimiento perfectamente aplicable; sin ambigüedad, con canales y validaciones. |
 
 **Ejemplos ancla:** Ancla 5: '1. Abre la App 2. Menú Servicios 3. Certificaciones...'; Ancla 1: 'gestione su certificación' sin más.
 
@@ -114,7 +114,7 @@ _¿Cumple la plantilla KCS y es coherente internamente (campos, evidencia, metad
 | 4 | Plantilla KCS bien aplicada y coherente. |
 | 5 | Plantilla impecable; evidence_pack trazable y metadata consistente con el contenido. |
 
-**Ejemplos ancla:** Ancla 5: cause='No aplica' en howto y resolution accionable; Ancla 1: problem habla de tarjetas y resolution de transferencias.
+**Ejemplos ancla:** Ancla 5: cause='No aplica' en howto y resolution aplicable; Ancla 1: problem habla de tarjetas y resolution de transferencias.
 
 
 ---
@@ -383,7 +383,7 @@ Asigna un entero entre 1 (deficiente) y 5 (excelente) a cada una:
   - 3: falta un detalle menor.
   - 1: omite información crítica disponible en las fuentes.
 
-- **accionabilidad**: ¿La sección `resolution` es ejecutable paso a paso?
+- **aplicabilidad**: ¿La sección `resolution` es ejecutable paso a paso?
   ¿Cada paso indica EL canal, EL botón, EL plazo?
   - 5: cada paso es atómico, imperativo y verificable.
   - 3: pasos correctos pero algunos genéricos ("consulte la opción").
@@ -402,7 +402,7 @@ Marca `approved=true` si Y SOLO SI:
   - cero hallazgos de PII (check_pii sobre los campos de texto)
   - cero `blocking_issues` (ver definición estricta más abajo)
 
-De lo contrario `approved=false` con feedback accionable.
+De lo contrario `approved=false` con feedback aplicable.
 
 ## Qué cuenta como blocking_issue (criterio ESTRICTO)
 Reserva `blocking_issues` SOLO para problemas que harían no publicable el
@@ -582,7 +582,7 @@ Cada `Agent` define `role` + `goal` inline y usa el prompt de sistema como
 | Agente | role | goal | backstory |
 |---|---|---|---|
 | investigador | `Knowledge Analyst` | "Detectar patrones recurrentes en interacciones de WhatsApp Davivienda y agruparlas en unidades de conocimiento mínimas y específicas." | `analyzer.system` |
-| escritor | `KB Article Writer` | "Redactar artículos KCS accionables a partir de una unidad de conocimiento, usando vocabulario del cliente y citando fuentes." | `generator.system` |
+| escritor | `KB Article Writer` | "Redactar artículos KCS aplicables a partir de una unidad de conocimiento, usando vocabulario del cliente y citando fuentes." | `generator.system` |
 | revisor | `Quality Reviewer` | "Evaluar la calidad de un artículo KCS, contrastarlo contra la evidencia y emitir un veredicto approved/rejected con feedback." | `critic.system` |
 | editor | `Final Editor` | "Verificar que el evidence_pack mapea cada afirmación verificable a interacciones fuente, y preparar el artículo para revisión humana." | `governance.system` |
 
@@ -1051,24 +1051,24 @@ flowchart TD
 
 ### Tabla principal — split evaluation (50 interacciones × 3 runs)
 
-| framework | runs | arts | cov% | KCS% | ev% | simK | lat_med | lat_p90 | cost$ | tools | fail% | LOC |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| baseline_heuristic | 3 | 50.0 | 100.0 | 100 | 100 | 37 | 116.7 | 119.9 | 0.000 | 0 | 0 | 282 |
-| baseline_prompt | 3 | 50.0 | 100.0 | 100 | 100 | 43 | 826.6 | 827.2 | 0.917 | 0 | 0 | 340 |
-| langgraph | 3 | 52.7 | 86.7 | 100 | 100 | 41 | 17398.0 | 17724.3 | 28.098 | 1964 | 0 | 831 |
-| crewai | 3 | 52.3 | 98.7 | 100 | 96 | 42 | 15742.2 | 16507.1 | 27.060 | 687 | 0 | 932 |
-| openai_agents | 3 | 57.0 | 99.3 | 100 | 100 | 40 | 14863.2 | 15382.1 | 27.169 | 1206 | 0 | 803 |
+| framework | runs | arts | cov% | KCS% | ev% | lat_med | lat_p90 | cost$ | tools | fail% | LOC |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| baseline_heuristic | 3 | 50.0 | 100.0 | 100 | 100 | 116.7 | 119.9 | 0.000 | 0 | 0 | 282 |
+| baseline_prompt | 3 | 50.0 | 100.0 | 100 | 100 | 826.6 | 827.2 | 0.917 | 0 | 0 | 340 |
+| langgraph | 3 | 52.7 | 86.7 | 100 | 100 | 17398.0 | 17724.3 | 28.098 | 1964 | 0 | 831 |
+| crewai | 3 | 52.3 | 98.7 | 100 | 96 | 15742.2 | 16507.1 | 27.060 | 687 | 0 | 932 |
+| openai_agents | 3 | 57.0 | 99.3 | 100 | 100 | 14863.2 | 15382.1 | 27.169 | 1206 | 0 | 803 |
 
 
 ### G.2 Validación de robustez (split reserva)
 
 ### Tabla de robustez — split reserve (37 interacciones × 1 run)
 
-| framework | runs | arts | cov% | KCS% | ev% | simK | lat_med | lat_p90 | cost$ | tools | fail% | LOC |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| langgraph | 1 | 40.0 | 91.9 | 100 | 100 | 40 | 11624.6 | 11624.6 | 17.286 | 1207 | 0 | 831 |
-| crewai | 1 | 37.0 | 100.0 | 100 | 98 | 38 | 10916.7 | 10916.7 | 18.833 | 491 | 0 | 932 |
-| openai_agents | 1 | 42.0 | 97.3 | 100 | 100 | 39 | 11257.7 | 11257.7 | 21.342 | 956 | 0 | 803 |
+| framework | runs | arts | cov% | KCS% | ev% | lat_med | lat_p90 | cost$ | tools | fail% | LOC |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| langgraph | 1 | 40.0 | 91.9 | 100 | 100 | 11624.6 | 11624.6 | 17.286 | 1207 | 0 | 831 |
+| crewai | 1 | 37.0 | 100.0 | 100 | 98 | 10916.7 | 10916.7 | 18.833 | 491 | 0 | 932 |
+| openai_agents | 1 | 42.0 | 97.3 | 100 | 100 | 11257.7 | 11257.7 | 21.342 | 956 | 0 | 803 |
 
 
 ### G.3 Pruebas de Friedman por dimensión humana
@@ -1078,7 +1078,7 @@ flowchart TD
 | claridad | 2.4000 | 0.4936 | No | 0.0500 |
 | exactitud | 2.1325 | 0.5454 | No | 0.0444 |
 | completitud | 6.6923 | 0.0824 | No | 0.1394 |
-| accionabilidad | 4.2000 | 0.2407 | No | 0.0875 |
+| aplicabilidad | 4.2000 | 0.2407 | No | 0.0875 |
 | consistencia | 6.1034 | 0.1067 | No | 0.1272 |
 
 ### G.4 Contraste de hipótesis
@@ -1086,7 +1086,7 @@ flowchart TD
 | Hipótesis | Veredicto | Dato decisivo |
 |---|---|---|
 | H1 | REFUTADA | Fallos: LangGraph 22.67%, CrewAI 1.33%, OpenAI 2.0% |
-| H2 | PARCIALMENTE SOPORTADA | CrewAI mayor media; Friedman 3-fw n.s. (claridad p=0.3679, accionabilidad p=0.1561) |
+| H2 | PARCIALMENTE SOPORTADA | CrewAI mayor media; Friedman 3-fw n.s. (claridad p=0.3679, aplicabilidad p=0.1561) |
 | H3 | EVALUADA (parcial) | CV medio inter-run: CrewAI 0.74%, OpenAI 1.42%, LangGraph 2.62% |
 | H4 | NO EVALUADA | Ablación `no_evidence` no ejecutada |
 

@@ -131,7 +131,7 @@ def _build_agents(llm: LLM, prompts: Dict[str, Dict[str, Any]]) -> Dict[str, Age
     escritor = Agent(
         role="KB Article Writer",
         goal=(
-            "Redactar artículos KCS accionables a partir de una unidad de "
+            "Redactar artículos KCS aplicables a partir de una unidad de "
             "conocimiento, usando vocabulario del cliente y citando fuentes."
         ),
         backstory=prompts["generator"]["system"],

@@ -11,7 +11,7 @@
     "claridad",
     "exactitud",
     "completitud",
-    "accionabilidad",
+    "aplicabilidad",
     "consistencia"
   ],
   "alpha": 0.05,
@@ -41,7 +41,7 @@
         "min": 4.0,
         "max": 5.0
       },
-      "accionabilidad": {
+      "aplicabilidad": {
         "n": 16,
         "median": 4.0,
         "mean": 4.125,
@@ -88,7 +88,7 @@
         "min": 4.0,
         "max": 5.0
       },
-      "accionabilidad": {
+      "aplicabilidad": {
         "n": 16,
         "median": 4.0,
         "mean": 4.312,
@@ -135,7 +135,7 @@
         "min": 4.0,
         "max": 5.0
       },
-      "accionabilidad": {
+      "aplicabilidad": {
         "n": 16,
         "median": 4.0,
         "mean": 4.062,
@@ -182,7 +182,7 @@
         "min": 4.0,
         "max": 5.0
       },
-      "accionabilidad": {
+      "aplicabilidad": {
         "n": 16,
         "median": 4.0,
         "mean": 4.188,
@@ -251,7 +251,7 @@
       "n_blocks": 16,
       "k_treatments": 4
     },
-    "accionabilidad": {
+    "aplicabilidad": {
       "friedman_chi2": 4.2,
       "p_value": 0.2406618852096152,
       "significant": false,
@@ -284,7 +284,6 @@
   },
   "automatic_metrics": {
     "langgraph": {
-      "simK": 41.02,
       "kcs_pct": 100.0,
       "evidence_pct": 100.0,
       "coverage_pct": 86.7,
@@ -294,7 +293,6 @@
       "loc": 831
     },
     "crewai": {
-      "simK": 41.98,
       "kcs_pct": 100.0,
       "evidence_pct": 96.4,
       "coverage_pct": 98.7,
@@ -304,7 +302,6 @@
       "loc": 932
     },
     "openai_agents": {
-      "simK": 40.43,
       "kcs_pct": 100.0,
       "evidence_pct": 99.8,
       "coverage_pct": 99.3,
@@ -314,7 +311,6 @@
       "loc": 803
     },
     "baseline_prompt": {
-      "simK": 42.84,
       "kcs_pct": 100.0,
       "evidence_pct": 100.0,
       "coverage_pct": 100.0,
@@ -325,25 +321,6 @@
     }
   },
   "correlations_human_vs_auto": {
-    "simK": {
-      "spearman_rho": -0.211,
-      "spearman_p": 0.7892,
-      "pearson_r": 0.036,
-      "pearson_p": 0.964,
-      "human_means": {
-        "langgraph": 4.15,
-        "crewai": 4.388,
-        "openai_agents": 4.225,
-        "baseline_prompt": 4.15
-      },
-      "auto_values": {
-        "langgraph": 41.02,
-        "crewai": 41.98,
-        "openai_agents": 40.43,
-        "baseline_prompt": 42.84
-      },
-      "n": 4
-    },
     "cost_usd": {
       "spearman_rho": -0.105,
       "spearman_p": 0.8946,
@@ -451,7 +428,7 @@
       }
     },
     "H2": {
-      "statement": "H2: CrewAI tendrá mayor calidad percibida en claridad y accionabilidad.",
+      "statement": "H2: CrewAI tendrá mayor calidad percibida en claridad y aplicabilidad.",
       "by_dimension": {
         "claridad": {
           "friedman_chi2": 2.0,
@@ -466,7 +443,7 @@
           "best": "crewai",
           "crewai_is_best": true
         },
-        "accionabilidad": {
+        "aplicabilidad": {
           "friedman_chi2": 3.7143,
           "p_value": 0.15611804531597104,
           "significant": false,

@@ -258,7 +258,7 @@ Asigna un entero entre 1 (deficiente) y 5 (excelente) a cada una:
   - 3: falta un detalle menor.
   - 1: omite información crítica disponible en las fuentes.
 
-- **accionabilidad**: ¿La sección `resolution` es ejecutable paso a paso?
+- **aplicabilidad**: ¿La sección `resolution` es ejecutable paso a paso?
   ¿Cada paso indica EL canal, EL botón, EL plazo?
   - 5: cada paso es atómico, imperativo y verificable.
   - 3: pasos correctos pero algunos genéricos ("consulte la opción").
@@ -277,7 +277,7 @@ Marca `approved=true` si Y SOLO SI:
   - cero hallazgos de PII (check_pii sobre los campos de texto)
   - cero `blocking_issues` (ver definición estricta más abajo)
 
-De lo contrario `approved=false` con feedback accionable.
+De lo contrario `approved=false` con feedback aplicable.
 
 ## Qué cuenta como blocking_issue (criterio ESTRICTO)
 Reserva `blocking_issues` SOLO para problemas que harían no publicable el
@@ -457,7 +457,7 @@ Cada `Agent` define `role` + `goal` inline y usa el prompt de sistema como
 | Agente | role | goal | backstory |
 |---|---|---|---|
 | investigador | `Knowledge Analyst` | "Detectar patrones recurrentes en interacciones de WhatsApp Davivienda y agruparlas en unidades de conocimiento mínimas y específicas." | `analyzer.system` |
-| escritor | `KB Article Writer` | "Redactar artículos KCS accionables a partir de una unidad de conocimiento, usando vocabulario del cliente y citando fuentes." | `generator.system` |
+| escritor | `KB Article Writer` | "Redactar artículos KCS aplicables a partir de una unidad de conocimiento, usando vocabulario del cliente y citando fuentes." | `generator.system` |
 | revisor | `Quality Reviewer` | "Evaluar la calidad de un artículo KCS, contrastarlo contra la evidencia y emitir un veredicto approved/rejected con feedback." | `critic.system` |
 | editor | `Final Editor` | "Verificar que el evidence_pack mapea cada afirmación verificable a interacciones fuente, y preparar el artículo para revisión humana." | `governance.system` |
 

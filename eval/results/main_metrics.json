@@ -3,7 +3,6 @@
   "frameworks": {
     "baseline_heuristic": {
       "framework": "baseline_heuristic",
-      "ablation": null,
       "n_runs": 3,
       "consolidation": {
         "articles_avg": 50.0,
@@ -14,9 +13,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 1.0,
-        "reference_similarity_avg": 0.07420035864688715,
-        "reference_similarity_max_avg": 0.3660742122806842
+        "evidence_coverage_avg": 1.0
       },
       "engineering": {
         "n_runs": 3,
@@ -48,9 +45,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.07420035864688715,
-            "reference_similarity_max_avg": 0.36607421228068426
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 0,
@@ -83,9 +78,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.07420035864688715,
-            "reference_similarity_max_avg": 0.36607421228068426
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 0,
@@ -118,9 +111,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.07420035864688715,
-            "reference_similarity_max_avg": 0.36607421228068426
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 0,
@@ -144,7 +135,6 @@
     },
     "baseline_prompt": {
       "framework": "baseline_prompt",
-      "ablation": null,
       "n_runs": 3,
       "consolidation": {
         "articles_avg": 50.0,
@@ -155,9 +145,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 1.0,
-        "reference_similarity_avg": 0.11095650754127347,
-        "reference_similarity_max_avg": 0.42839845226995515
+        "evidence_coverage_avg": 1.0
       },
       "engineering": {
         "n_runs": 3,
@@ -189,9 +177,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11160900261583835,
-            "reference_similarity_max_avg": 0.42988833633698464
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 80336,
@@ -224,9 +210,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11165364673552094,
-            "reference_similarity_max_avg": 0.42923162905955115
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 80336,
@@ -259,9 +243,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.10960687327246109,
-            "reference_similarity_max_avg": 0.42607539141332973
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 80336,
@@ -285,7 +267,6 @@
     },
     "crewai": {
       "framework": "crewai",
-      "ablation": null,
       "n_runs": 3,
       "consolidation": {
         "articles_avg": 52.333333333333336,
@@ -296,9 +277,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 0.9641523221711901,
-        "reference_similarity_avg": 0.12018311429426705,
-        "reference_similarity_max_avg": 0.41984682002584667
+        "evidence_coverage_avg": 0.9641523221711901
       },
       "engineering": {
         "n_runs": 3,
@@ -330,9 +309,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 0.965427627927628,
-            "reference_similarity_avg": 0.11833547184684867,
-            "reference_similarity_max_avg": 0.42017345255144734
+            "evidence_coverage_avg": 0.965427627927628
           },
           "metrics": {
             "total_tokens_in": 4491529,
@@ -365,9 +342,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 0.9670787545787545,
-            "reference_similarity_avg": 0.1197606554463177,
-            "reference_similarity_max_avg": 0.42350017538280493
+            "evidence_coverage_avg": 0.9670787545787545
           },
           "metrics": {
             "total_tokens_in": 4459447,
@@ -400,9 +375,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 0.9599505840071876,
-            "reference_similarity_avg": 0.1224532155896348,
-            "reference_similarity_max_avg": 0.4158668321432878
+            "evidence_coverage_avg": 0.9599505840071876
           },
           "metrics": {
             "total_tokens_in": 4500427,
@@ -426,7 +399,6 @@
     },
     "langgraph": {
       "framework": "langgraph",
-      "ablation": null,
       "n_runs": 3,
       "consolidation": {
         "articles_avg": 52.666666666666664,
@@ -437,9 +409,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 1.0,
-        "reference_similarity_avg": 0.1158886343655759,
-        "reference_similarity_max_avg": 0.4101500210724525
+        "evidence_coverage_avg": 1.0
       },
       "engineering": {
         "n_runs": 3,
@@ -471,9 +441,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11705582692316498,
-            "reference_similarity_max_avg": 0.41798653485487414
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 2468162,
@@ -506,9 +474,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11575447738402396,
-            "reference_similarity_max_avg": 0.41964710957937573
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 2371550,
@@ -541,9 +507,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11485559878953876,
-            "reference_similarity_max_avg": 0.39281641878310786
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 2313976,
@@ -567,7 +531,6 @@
     },
     "openai_agents": {
       "framework": "openai_agents",
-      "ablation": null,
       "n_runs": 3,
       "consolidation": {
         "articles_avg": 57.0,
@@ -578,9 +541,7 @@
       "quality": {
         "kcs_compliance_avg": 1.0,
         "kcs_fully_compliant_pct_avg": 100.0,
-        "evidence_coverage_avg": 0.9983702725989477,
-        "reference_similarity_avg": 0.11405315988489369,
-        "reference_similarity_max_avg": 0.4042798808880847
+        "evidence_coverage_avg": 0.9983702725989477
       },
       "engineering": {
         "n_runs": 3,
@@ -612,9 +573,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 0.9968652037617555,
-            "reference_similarity_avg": 0.11358628184296984,
-            "reference_similarity_max_avg": 0.3995730209658554
+            "evidence_coverage_avg": 0.9968652037617555
           },
           "metrics": {
             "total_tokens_in": 4372030,
@@ -647,9 +606,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 0.9982456140350877,
-            "reference_similarity_avg": 0.11418669416054658,
-            "reference_similarity_max_avg": 0.4088453442269264
+            "evidence_coverage_avg": 0.9982456140350877
           },
           "metrics": {
             "total_tokens_in": 4247472,
@@ -682,9 +639,7 @@
           "quality": {
             "kcs_compliance_avg": 1.0,
             "kcs_fully_compliant_pct": 100.0,
-            "evidence_coverage_avg": 1.0,
-            "reference_similarity_avg": 0.11438650365116466,
-            "reference_similarity_max_avg": 0.4044212774714722
+            "evidence_coverage_avg": 1.0
           },
           "metrics": {
             "total_tokens_in": 4325358,
@@ -707,6 +662,5 @@
       ]
     }
   },
-  "reference_articles_count": 118,
   "input_corpus_total": 183
 }

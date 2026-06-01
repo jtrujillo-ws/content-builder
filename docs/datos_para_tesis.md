@@ -68,20 +68,19 @@ evaluación, estratificado por `product_category × severity × query_type`
 
 Estudio principal (50 interacciones × 3 runs; promedios entre runs).
 
-| Framework | artículos (prom.) | cobertura % | KCS % | evidencia % | simK |
-|---|---|---|---|---|---|
-| LangGraph | 52.67 | 86.67 | 100.00 | 100.00 | 41.02 |
-| CrewAI | 52.33 | 98.67 | 100.00 | 96.42 | 41.98 |
-| OpenAI Agents | 57.00 | 99.33 | 100.00 | 99.84 | 40.43 |
-| Baseline (prompt) | 50.00 | 100.00 | 100.00 | 100.00 | 42.84 |
-| Baseline (heurístico) | 50.00 | 100.00 | 100.00 | 100.00 | 36.61 |
+| Framework | artículos (prom.) | cobertura % | KCS % | evidencia % |
+|---|---|---|---|---|
+| LangGraph | 52.67 | 86.67 | 100.00 | 100.00 |
+| CrewAI | 52.33 | 98.67 | 100.00 | 96.42 |
+| OpenAI Agents | 57.00 | 99.33 | 100.00 | 99.84 |
+| Baseline (prompt) | 50.00 | 100.00 | 100.00 | 100.00 |
+| Baseline (heurístico) | 50.00 | 100.00 | 100.00 | 100.00 |
 
 - **artículos**: promedio de artículos generados por run (los frameworks
   consolidan/dividen, por eso difieren de 50).
 - **cobertura %**: interacciones del input efectivamente cubiertas por algún artículo.
 - **KCS %**: cumplimiento de la plantilla KCS (todos al 100%).
 - **evidencia %**: cobertura de `evidence_pack` (afirmaciones con respaldo).
-- **simK**: mejor similitud TF-IDF del artículo vs el KB de referencia (×100).
 
 ## 8.3 Métricas de ingeniería por framework
 
@@ -112,7 +111,7 @@ repetidos (bloque = interacción). α = 0.05.
 | claridad | 2.4000 | 0.493635 | No | 0.0500 | acuerdo muy débil |
 | exactitud | 2.1325 | 0.545360 | No | 0.0444 | acuerdo muy débil |
 | completitud | 6.6923 | 0.082379 | No | 0.1394 | acuerdo débil |
-| accionabilidad | 4.2000 | 0.240662 | No | 0.0875 | acuerdo muy débil |
+| aplicabilidad | 4.2000 | 0.240662 | No | 0.0875 | acuerdo muy débil |
 | consistencia | 6.1034 | 0.106684 | No | 0.1272 | acuerdo débil |
 
 **Ninguna dimensión alcanza significancia (p < 0.05)** → no hay diferencias
@@ -126,12 +125,12 @@ generadores; no se aplica post-hoc.
 | claridad | 2.625 | 2.250 | 2.500 | 2.625 |
 | exactitud | 2.656 | 2.250 | 2.438 | 2.656 |
 | completitud | 2.688 | 2.062 | 2.312 | 2.938 |
-| accionabilidad | 2.594 | 2.219 | 2.719 | 2.469 |
+| aplicabilidad | 2.594 | 2.219 | 2.719 | 2.469 |
 | consistencia | 2.719 | 2.094 | 2.594 | 2.594 |
 
 **Estadística descriptiva humana por dimensión** (media ± SD [mediana], escala 1–5):
 
-| Framework | claridad | exactitud | completitud | accionabilidad | consistencia | global |
+| Framework | claridad | exactitud | completitud | aplicabilidad | consistencia | global |
 |---|---|---|---|---|---|---|
 | LangGraph | 4.125±0.331 [4] | 4.188±0.390 [4] | 4.250±0.433 [4] | 4.125±0.331 [4] | 4.062±0.242 [4] | 4.150±0.357 |
 | CrewAI | 4.312±0.583 [4] | 4.375±0.599 [4] | 4.562±0.496 [5] | 4.312±0.583 [4] | 4.375±0.484 [4] | 4.388±0.559 |
@@ -140,13 +139,7 @@ generadores; no se aplica post-hoc.
 
 ## 8.5 Efectos de las ablaciones
 
-**No se ejecutaron ablaciones.** El flag `--ablation {no_grouping, no_critic,
-no_evidence, no_memory}` existe en `run_experiment.py` pero, salvo `no_grouping`
-(que sólo fuerza `batch_size=1`), las ablaciones se registran en metadata y no
-alteran el comportamiento del runner (wiring pendiente). Todos los
-`experiment_summary.json` tienen `ablation: null`. En consecuencia, hipótesis que
-dependen de una ablación —en particular H4 (evidence pack → exactitud)— no pueden
-contrastarse con los datos actuales (ver §9.1 y §8 limitaciones).
+Las ablaciones no se ejecutaron (ver Limitaciones, Sección 11).
 
 ---
 
@@ -157,7 +150,7 @@ contrastarse con los datos actuales (ver §9.1 y §8 limitaciones).
 | Hipótesis | Enunciado | Dato clave | Veredicto |
 |---|---|---|---|
 | **H1** | LangGraph tendrá menor tasa de fallos | tasa de fallos (errores/lotes): **LangGraph 22.67%**, CrewAI 1.33%, OpenAI 2.00% | ❌ **REFUTADA** (LangGraph es el más alto; el menor es CrewAI) |
-| **H2** | CrewAI mayor calidad en claridad y accionabilidad | CrewAI tiene la media más alta entre los 3 frameworks en ambas, pero Friedman 3-fw no es significativo | 🟡 **PARCIALMENTE SOPORTADA** (dirección sí, significancia no) |
+| **H2** | CrewAI mayor calidad en claridad y aplicabilidad | CrewAI tiene la media más alta entre los 3 frameworks en ambas, pero Friedman 3-fw no es significativo | 🟡 **PARCIALMENTE SOPORTADA** (dirección sí, significancia no) |
 | **H3** | Mejor instrumentación → mejor reproducibilidad (CV inter-run) | CV medio (costo/tools/artículos): **CrewAI 0.74%**, OpenAI 1.42%, LangGraph 2.62% | 🟡 **EVALUADA (parcial)**: CrewAI el más reproducible |
 | **H4** | Evidence pack → mejor exactitud | Requiere ablación `no_evidence` (no ejecutada) | ⚪ **NO EVALUADA** (limitación) |
 
@@ -174,7 +167,7 @@ contrastarse con los datos actuales (ver §9.1 y §8 limitaciones).
 | Dimensión | LangGraph | CrewAI | OpenAI | mejor | p-valor | W | sig. |
 |---|---|---|---|---|---|---|---|
 | claridad | 4.125 | 4.312 | 4.188 | CrewAI | 0.3679 | 0.0625 | No |
-| accionabilidad | 4.125 | 4.312 | 4.062 | CrewAI | 0.1561 | 0.1161 | No |
+| aplicabilidad | 4.125 | 4.312 | 4.062 | CrewAI | 0.1561 | 0.1161 | No |
 
 **H3 — coeficiente de variación inter-run (3 runs)**
 
@@ -189,12 +182,12 @@ contrastarse con los datos actuales (ver §9.1 y §8 limitaciones).
 
 ## 9.2 Calidad humana vs eficiencia automática (lado a lado)
 
-| Framework | calidad humana (global) | simK | cobertura % | evidencia % | costo mediano $ | tool calls | tasa fallos % | LOC |
-|---|---|---|---|---|---|---|---|---|
-| LangGraph | 4.150 | 41.02 | 86.67 | 100.00 | 28.0977 | 1963.67 | 22.67 | 831 |
-| CrewAI | 4.388 | 41.98 | 98.67 | 96.42 | 27.0596 | 687.33 | 1.33 | 932 |
-| OpenAI Agents | 4.225 | 40.43 | 99.33 | 99.84 | 27.1687 | 1206.00 | 2.00 | 803 |
-| Baseline (prompt) | 4.150 | 42.84 | 100.00 | 100.00 | 0.9170 | 0.00 | n/a | 340 |
+| Framework | calidad humana (global) | cobertura % | evidencia % | costo mediano $ | tool calls | tasa fallos % | LOC |
+|---|---|---|---|---|---|---|---|
+| LangGraph | 4.150 | 86.67 | 100.00 | 28.0977 | 1963.67 | 22.67 | 831 |
+| CrewAI | 4.388 | 98.67 | 96.42 | 27.0596 | 687.33 | 1.33 | 932 |
+| OpenAI Agents | 4.225 | 99.33 | 99.84 | 27.1687 | 1206.00 | 2.00 | 803 |
+| Baseline (prompt) | 4.150 | 100.00 | 100.00 | 0.9170 | 0.00 | n/a | 340 |
 
 > Lectura: la calidad humana es estadísticamente indistinguible entre generadores
 > (§8.4), mientras que la eficiencia difiere en órdenes de magnitud. El baseline de
@@ -204,7 +197,6 @@ contrastarse con los datos actuales (ver §9.1 y §8 limitaciones).
 
 | Métrica auto | Spearman ρ | p | Pearson r | p |
 |---|---|---|---|---|
-| simK | −0.211 | 0.789 | 0.036 | 0.964 |
 | costo $ | −0.105 | 0.895 | 0.440 | 0.560 |
 | tool_calls | −0.105 | 0.895 | −0.171 | 0.829 |
 | cobertura % | −0.105 | 0.895 | 0.391 | 0.609 |
@@ -216,19 +208,19 @@ contrastarse con los datos actuales (ver §9.1 y §8 limitaciones).
 
 Split de reserva: 37 interacciones, 1 run por framework.
 
-| Framework | escenario | artículos | cobertura % | KCS % | evidencia % | simK | costo $ | tool calls | fallos % |
-|---|---|---|---|---|---|---|---|---|---|
-| LangGraph | principal | 52.67 | 86.67 | 100 | 100.00 | 41.02 | 28.10 | 1963.67 | 0 |
-| LangGraph | reserva | 40.00 | 91.89 | 100 | 100.00 | 40.10 | 17.29 | 1207.00 | 0 |
-| CrewAI | principal | 52.33 | 98.67 | 100 | 96.42 | 41.98 | 27.06 | 687.33 | 0 |
-| CrewAI | reserva | 37.00 | 100.00 | 100 | 97.70 | 37.89 | 18.83 | 491.00 | 0 |
-| OpenAI | principal | 57.00 | 99.33 | 100 | 99.84 | 40.43 | 27.17 | 1206.00 | 0 |
-| OpenAI | reserva | 42.00 | 97.30 | 100 | 100.00 | 39.16 | 21.34 | 956.00 | 0 |
+| Framework | escenario | artículos | cobertura % | KCS % | evidencia % | costo $ | tool calls | fallos % |
+|---|---|---|---|---|---|---|---|---|
+| LangGraph | principal | 52.67 | 86.67 | 100 | 100.00 | 28.10 | 1963.67 | 0 |
+| LangGraph | reserva | 40.00 | 91.89 | 100 | 100.00 | 17.29 | 1207.00 | 0 |
+| CrewAI | principal | 52.33 | 98.67 | 100 | 96.42 | 27.06 | 687.33 | 0 |
+| CrewAI | reserva | 37.00 | 100.00 | 100 | 97.70 | 18.83 | 491.00 | 0 |
+| OpenAI | principal | 57.00 | 99.33 | 100 | 99.84 | 27.17 | 1206.00 | 0 |
+| OpenAI | reserva | 42.00 | 97.30 | 100 | 100.00 | 21.34 | 956.00 | 0 |
 
 **Estabilidad de patrones** (umbral 5% relativo, ver `EXECUTIVE_SUMMARY.md`): los
 rankings se mantienen en las métricas con separación real (KCS, evidencia,
-tool_calls, fallos); los cambios de orden en simK/costo/cobertura ocurren entre
-valores casi empatados (dentro de ±5%) y se consideran ruido. Veredicto: **8/8
+tool_calls, fallos); los cambios de orden en costo/cobertura ocurren entre
+valores casi empatados (dentro de ±5%) y se consideran ruido. Veredicto: **7/7
 rankings robustos**.
 
 ## 9.4 Ranking por escenario organizacional
@@ -258,13 +250,13 @@ rankings de calidad se basan en medias puntuales.)
 > evidencia y la cobertura**, OpenAI Agents lidera; si pondera más la **fiabilidad
 > operativa (fallos) y la reproducibilidad**, CrewAI lidera.
 
-**Escenario C — Calidad máxima** (prioriza calidad humana, completitud, simK)
+**Escenario C — Calidad máxima** (prioriza calidad humana y completitud)
 
-| Puesto | Opción | calidad humana | completitud | simK | Justificación |
-|---|---|---|---|---|---|
-| 1 | CrewAI | 4.388 | 4.562 | 41.98 | Media humana y completitud más altas entre frameworks |
-| 2 | OpenAI Agents | 4.225 | 4.438 | 40.43 | Segundo en calidad humana y completitud |
-| 3 | LangGraph | 4.150 | 4.250 | 41.02 | Menor calidad humana global |
+| Puesto | Opción | calidad humana | completitud | Justificación |
+|---|---|---|---|---|
+| 1 | CrewAI | 4.388 | 4.562 | Media humana y completitud más altas entre frameworks |
+| 2 | OpenAI Agents | 4.225 | 4.438 | Segundo en calidad humana y completitud |
+| 3 | LangGraph | 4.150 | 4.250 | Menor calidad humana global |
 
 > Caveat estadístico: las diferencias de calidad humana **no son significativas**
 > (§8.4). Para "calidad máxima" estricta, ningún framework supera al baseline de un
@@ -287,8 +279,7 @@ dimensiones con p más bajo, más cercanas a significancia— es en **completitu
 (p = 0.082; CrewAI 4.562 vs LangGraph 4.250 y Baseline 4.125) y **consistencia**
 (p = 0.107; CrewAI 4.375 vs LangGraph 4.062). Es decir: las (no significativas)
 diferencias se concentran en completitud y consistencia, a favor de CrewAI.
-Métricas automáticas de calidad: KCS 100% en todos; evidencia 96.42–100%;
-simK 40.43–42.84 (todas dentro de ±5%).
+Métricas automáticas de calidad: KCS 100% en todos; evidencia 96.42–100%.
 
 **SP2 — ¿Qué framework presenta menor tasa de fallos en el flujo completo
 (detección + generación + verificación), y cuáles son los modos de fallo

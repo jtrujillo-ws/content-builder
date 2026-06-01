@@ -32,14 +32,12 @@ def _metrics_row(fw: Dict[str, Any]) -> Dict[str, Optional[float]]:
     e = fw.get("engineering", {}) or {}
     lat = e.get("latency_seconds", {}) or {}
     cost = e.get("cost_usd", {}) or {}
-    sim = q.get("reference_similarity_max_avg")
     return {
         "n_runs": fw.get("n_runs"),
         "arts": c.get("articles_avg"),
         "cov": c.get("interaction_coverage_pct_avg"),
         "kcs": (q.get("kcs_compliance_avg") or 0) * 100 if q.get("kcs_compliance_avg") is not None else None,
         "ev": (q.get("evidence_coverage_avg") or 0) * 100 if q.get("evidence_coverage_avg") is not None else None,
-        "simK": (sim or 0) * 100 if sim is not None else None,
         "lat_med": lat.get("median"),
         "lat_p90": lat.get("p90"),
         "cost": cost.get("median"),
@@ -64,7 +62,6 @@ COLS = [
     ("cov", "cov%", "{:.1f}"),
     ("kcs", "KCS%", "{:.0f}"),
     ("ev", "ev%", "{:.0f}"),
-    ("simK", "simK", "{:.0f}"),
     ("lat_med", "lat_med", "{:.1f}"),
     ("lat_p90", "lat_p90", "{:.1f}"),
     ("cost", "cost$", "{:.3f}"),
@@ -93,7 +90,6 @@ def _md_table(report: Dict[str, Any], order: List[str]) -> str:
 ROBUST_METRICS = [
     ("kcs", "Cumplimiento KCS (KCS%)", "higher"),
     ("ev", "Cobertura de evidencia (ev%)", "higher"),
-    ("simK", "Similitud vs KB referencia (simK)", "higher"),
     ("cov", "Cobertura de interacciones (cov%)", "higher"),
     ("cost", "Costo mediano por run ($)", "lower"),
     ("tools", "Tool calls promedio", "lower"),
@@ -208,7 +204,7 @@ def _robustness_section(main: Dict[str, Any], reserve: Dict[str, Any]) -> str:
 
     # Tabla de deltas por framework y métrica clave de calidad
     out.append("### Deltas por framework (reserva − principal)\n")
-    delta_keys = [("kcs", "KCS%"), ("ev", "ev%"), ("simK", "simK"),
+    delta_keys = [("kcs", "KCS%"), ("ev", "ev%"),
                   ("cov", "cov%"), ("cost", "cost$"), ("tools", "tools")]
     dh = "| framework | " + " | ".join(lbl for _, lbl in delta_keys) + " |"
     out.append(dh)
@@ -296,7 +292,7 @@ def main(argv=None) -> int:
         main_tbl,
         "",
         "Leyenda: arts=artículos prom., cov%=cobertura interacciones, KCS%=cumplimiento "
-        "plantilla, ev%=cobertura evidencia, simK=similitud TF-IDF vs KB referencia, "
+        "plantilla, ev%=cobertura evidencia, "
         "lat=latencia (s), cost$=costo mediano, tools=tool calls prom., fail%=tasa de "
         "fallo, LOC=líneas de implementación.",
         "",
