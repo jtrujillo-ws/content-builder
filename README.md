@@ -143,7 +143,7 @@ Generar las plantillas Excel:
 ```
 
 El evaluador puntúa cada artículo (1–5) en las 5 dimensiones (claridad,
-exactitud, completitud, accionabilidad, consistencia) directamente en el Excel.
+exactitud, completitud, aplicabilidad, consistencia) directamente en el Excel.
 La hoja `key` (mapeo versión→framework) y la `rubrica` vienen incluidas. Guardar
 el archivo puntuado como `*_scored.xlsx`.
 

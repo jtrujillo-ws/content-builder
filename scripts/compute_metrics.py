@@ -37,7 +37,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts._common import (  # noqa: E402
     PROJECT_ROOT,
     load_interactions,
-    load_kb_articles,
     setup_logging,
 )
 
@@ -225,17 +224,12 @@ def _consolidation(
     }
 
 
-def _quality(
-    articles: List[Dict[str, Any]],
-    reference_articles: Optional[List[Dict[str, Any]]],
-) -> Dict[str, Any]:
+def _quality(articles: List[Dict[str, Any]]) -> Dict[str, Any]:
     if not articles:
         return {
             "kcs_compliance_avg": 0.0,
             "kcs_fully_compliant_pct": 0.0,
             "evidence_coverage_avg": 0.0,
-            "reference_similarity_avg": None,
-            "reference_similarity_max_avg": None,
         }
 
     compliance = [_kcs_compliance(a) for a in articles]
@@ -243,55 +237,10 @@ def _quality(
     fully = sum(1 for c in compliance if c["present"] == c["total"])
     evidence_cov = [_evidence_coverage(a) for a in articles]
 
-    similarity_avg = None
-    similarity_max_avg = None
-    if reference_articles:
-        gen_texts = [_article_text(a) for a in articles]
-        ref_texts: List[str] = []
-        for ref in reference_articles:
-            res = ref.get("resolution")
-            if isinstance(res, list):
-                # Cada item puede ser str o dict (algunas KBs tienen
-                # {"step": ..., "description": ...}).
-                res_parts: List[str] = []
-                for item in res:
-                    if isinstance(item, str):
-                        res_parts.append(item)
-                    elif isinstance(item, dict):
-                        res_parts.append(
-                            " ".join(str(v) for v in item.values() if isinstance(v, (str, int, float)))
-                        )
-                res_str = " ".join(res_parts)
-            elif isinstance(res, str):
-                res_str = res
-            else:
-                res_str = ""
-            ref_texts.append(
-                " \n ".join(
-                    filter(None, [ref.get("title"), ref.get("problem"), res_str])
-                )
-            )
-        try:
-            vec = TfidfVectorizer(
-                max_features=4096,
-                ngram_range=(1, 2),
-                lowercase=True,
-                strip_accents="unicode",
-            ).fit(gen_texts + ref_texts)
-            G = vec.transform(gen_texts)
-            R = vec.transform(ref_texts)
-            sim = cosine_similarity(G, R)
-            similarity_max_avg = float(np.mean(sim.max(axis=1)))
-            similarity_avg = float(np.mean(sim))
-        except ValueError:
-            pass
-
     return {
         "kcs_compliance_avg": avg_compliance,
         "kcs_fully_compliant_pct": (fully / len(articles)) * 100,
         "evidence_coverage_avg": sum(evidence_cov) / len(evidence_cov),
-        "reference_similarity_avg": similarity_avg,
-        "reference_similarity_max_avg": similarity_max_avg,
     }
 
 
@@ -357,9 +306,7 @@ def _engineering(runs: List[Dict[str, Any]], framework: str) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def aggregate(
-    runs_root: Path, reference_articles: Optional[List[Dict[str, Any]]]
-) -> Dict[str, Any]:
+def aggregate(runs_root: Path) -> Dict[str, Any]:
     by_framework: Dict[Tuple[str, Optional[str]], List[Dict[str, Any]]] = defaultdict(list)
 
     for framework, ablation, run_dir in _iter_run_dirs(runs_root):
@@ -380,7 +327,7 @@ def aggregate(
                 r["interaction_map"].keys() if r["interaction_map"] else []
             )
             cons = _consolidation(r["articles"], input_ids)
-            qual = _quality(r["articles"], reference_articles)
+            qual = _quality(r["articles"])
             per_run_consolidation.append(cons)
             per_run_quality.append(qual)
 
@@ -409,22 +356,11 @@ def aggregate(
             "kcs_compliance_avg": float(np.mean([q["kcs_compliance_avg"] for q in per_run_quality])) if per_run_quality else 0,
             "kcs_fully_compliant_pct_avg": float(np.mean([q["kcs_fully_compliant_pct"] for q in per_run_quality])) if per_run_quality else 0,
             "evidence_coverage_avg": float(np.mean([q["evidence_coverage_avg"] for q in per_run_quality])) if per_run_quality else 0,
-            "reference_similarity_avg": (
-                float(np.mean([q["reference_similarity_avg"] for q in per_run_quality if q["reference_similarity_avg"] is not None]))
-                if any(q["reference_similarity_avg"] is not None for q in per_run_quality)
-                else None
-            ),
-            "reference_similarity_max_avg": (
-                float(np.mean([q["reference_similarity_max_avg"] for q in per_run_quality if q["reference_similarity_max_avg"] is not None]))
-                if any(q["reference_similarity_max_avg"] is not None for q in per_run_quality)
-                else None
-            ),
         }
         engineering = _engineering(runs, framework)
 
         output["frameworks"][key] = {
             "framework": framework,
-            "ablation": ablation,
             "n_runs": len(runs),
             "consolidation": agg_consolidation,
             "quality": agg_quality,
@@ -469,7 +405,7 @@ def _print_table(report: Dict[str, Any]) -> None:
     print("=" * 110)
     header = (
         f"{'framework':<28} {'runs':>4} {'arts':>5} {'cov%':>5} "
-        f"{'KCS%':>5} {'ev%':>5} {'simK':>5} "
+        f"{'KCS%':>5} {'ev%':>5} "
         f"{'lat_med':>8} {'lat_p90':>8} {'cost$':>7} {'tools':>6} {'fail%':>6} {'LOC':>5}"
     )
     print(header)
@@ -484,7 +420,6 @@ def _print_table(report: Dict[str, Any]) -> None:
             f"{_fmt(c['interaction_coverage_pct_avg'], '{:.1f}'):>5} "
             f"{_fmt(q['kcs_compliance_avg']*100, '{:.0f}'):>5} "
             f"{_fmt(q['evidence_coverage_avg']*100, '{:.0f}'):>5} "
-            f"{_fmt((q['reference_similarity_max_avg'] or 0)*100, '{:.0f}'):>5} "
             f"{_fmt(e['latency_seconds']['median'], '{:.1f}'):>8} "
             f"{_fmt(e['latency_seconds']['p90'], '{:.1f}'):>8} "
             f"{_fmt(e['cost_usd']['median'], '{:.3f}'):>7} "
@@ -494,7 +429,7 @@ def _print_table(report: Dict[str, Any]) -> None:
         )
     print()
     print(" Leyenda: arts=artículos promedio, cov%=cobertura interacciones, KCS%=cumplimiento plantilla,")
-    print("          ev%=cobertura evidencia, simK%=mejor similitud TF-IDF vs KB referencia,")
+    print("          ev%=cobertura evidencia,")
     print("          lat_med/p90=latencia (s), cost$=costo mediano, tools=tool calls promedio, LOC=líneas.")
     print()
 
@@ -520,20 +455,10 @@ def main(argv=None) -> int:
         default=PROJECT_ROOT / "eval" / "results" / "automatic_metrics.json",
         help="Ruta del JSON de salida.",
     )
-    parser.add_argument(
-        "--no-reference",
-        action="store_true",
-        help="No usar kb_articles.jsonl como referencia.",
-    )
     args = parser.parse_args(argv)
     log = setup_logging("INFO")
 
-    reference = None if args.no_reference else load_kb_articles()
-    if reference is not None:
-        log.info("Referencia: %d artículos en kb_articles.jsonl", len(reference))
-
-    report = aggregate(args.runs_dir, reference)
-    report["reference_articles_count"] = len(reference) if reference else 0
+    report = aggregate(args.runs_dir)
     report["input_corpus_total"] = len(load_interactions())
 
     args.out.parent.mkdir(parents=True, exist_ok=True)

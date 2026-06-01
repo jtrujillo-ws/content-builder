@@ -140,9 +140,9 @@ def build_anexo_g() -> str:
     fr = h["H1"]["failure_rates_pct"]
     out.append(f"| H1 | {h['H1']['verdict']} | Fallos: LangGraph {fr['langgraph']}%, "
                f"CrewAI {fr['crewai']}%, OpenAI {fr['openai_agents']}% |")
-    cl = h["H2"]["by_dimension"]["claridad"]; ac = h["H2"]["by_dimension"]["accionabilidad"]
+    cl = h["H2"]["by_dimension"]["claridad"]; ac = h["H2"]["by_dimension"]["aplicabilidad"]
     out.append(f"| H2 | {h['H2']['verdict']} | CrewAI mayor media; Friedman 3-fw n.s. "
-               f"(claridad p={cl['p_value']:.4f}, accionabilidad p={ac['p_value']:.4f}) |")
+               f"(claridad p={cl['p_value']:.4f}, aplicabilidad p={ac['p_value']:.4f}) |")
     cv = h["H3"]["inter_run_cv"]
     out.append(f"| H3 | {h['H3']['verdict']} | CV medio inter-run: CrewAI "
                f"{cv['crewai']['mean_cv_pct']}%, OpenAI {cv['openai_agents']['mean_cv_pct']}%, "

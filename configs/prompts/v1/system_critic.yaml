@@ -52,7 +52,7 @@ system: |
     - 3: falta un detalle menor.
     - 1: omite información crítica disponible en las fuentes.
 
-  - **accionabilidad**: ¿La sección `resolution` es ejecutable paso a paso?
+  - **aplicabilidad**: ¿La sección `resolution` es ejecutable paso a paso?
     ¿Cada paso indica EL canal, EL botón, EL plazo?
     - 5: cada paso es atómico, imperativo y verificable.
     - 3: pasos correctos pero algunos genéricos ("consulte la opción").
@@ -71,7 +71,7 @@ system: |
     - cero hallazgos de PII (check_pii sobre los campos de texto)
     - cero `blocking_issues` (ver definición estricta más abajo)
 
-  De lo contrario `approved=false` con feedback accionable.
+  De lo contrario `approved=false` con feedback aplicable.
 
   ## Qué cuenta como blocking_issue (criterio ESTRICTO)
   Reserva `blocking_issues` SOLO para problemas que harían no publicable el
@@ -125,16 +125,16 @@ output_schema:
     approved: {type: boolean}
     scores:
       type: object
-      required: [claridad, exactitud, completitud, accionabilidad, consistencia]
+      required: [claridad, exactitud, completitud, aplicabilidad, consistencia]
       properties:
         claridad: {type: integer, minimum: 1, maximum: 5}
         exactitud: {type: integer, minimum: 1, maximum: 5}
         completitud: {type: integer, minimum: 1, maximum: 5}
-        accionabilidad: {type: integer, minimum: 1, maximum: 5}
+        aplicabilidad: {type: integer, minimum: 1, maximum: 5}
         consistencia: {type: integer, minimum: 1, maximum: 5}
     feedback:
       type: array
-      description: "Lista de hallazgos accionables. Vacío si approved=true sin observaciones."
+      description: "Lista de hallazgos aplicables. Vacío si approved=true sin observaciones."
       items:
         type: object
         required: [field, severity, message]
@@ -159,7 +159,7 @@ example_output: |
       "claridad": 4,
       "exactitud": 3,
       "completitud": 4,
-      "accionabilidad": 3,
+      "aplicabilidad": 3,
       "consistencia": 5
     },
     "feedback": [

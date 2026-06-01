@@ -83,12 +83,14 @@ def main(argv=None) -> int:
         "`experiment_reserve` para separar la validación de robustez.",
     )
     parser.add_argument("--runs", type=int, default=3, help="Repeticiones (default 3).")
+    # NOTA: las ablaciones NO están implementadas — reservado para trabajo futuro.
+    # El flag se conserva para compatibilidad y para registrar la intención en
+    # metadata, pero no se ejecutó ninguna ablación en este estudio.
     parser.add_argument(
         "--ablation",
         choices=ABLATION_CHOICES,
         default=None,
-        help="Ablación opcional. `no_grouping` fuerza batch_size=1; las otras se "
-        "registran como metadata y no alteran el comportamiento del runner.",
+        help="No implementado — reservado para trabajo futuro.",
     )
     parser.add_argument(
         "--batch-size",
