@@ -505,3 +505,163 @@ Presupuesto por lote (corte duro): `timeout_seconds: 900` (watchdog a 930s),
 > `claude-sonnet-4-6` en el commit `1303149`. Como los tres runners y el
 > baseline_prompt leen `budget["model"]["name"]`, el cambio se propaga desde un
 > único punto.
+
+---
+
+## 5. Baseline — Prompt único
+
+Fuente: `src/baselines/single_prompt.py`. A diferencia de los tres frameworks
+(que orquestan cuatro agentes con tools y lazos de revisión), este baseline hace
+**una sola llamada a Claude**, sin function calling, sin loops de verificación y
+sin agentes. Recibe todo el lote de interacciones, decide la agrupación y emite
+todos los artículos KCS en una única salida JSON.
+
+**Parámetros de la llamada** (idénticos a la variable de control; ver §4):
+`model = claude-sonnet-4-6`, `max_tokens = 4096`, `temperature = 0.3`, un solo
+turno `user`, sin `tools`. El `system` se envía con `cache_control: ephemeral`
+(prompt caching). Las interacciones se cargan con `get_interaction` (que enmascara
+`customer_profile.name`) y luego se resumen para no inflar el prompt.
+
+### 5.1 System prompt (texto exacto)
+
+Es una constante (`SYSTEM_PROMPT`), enviada verbatim en cada llamada:
+
+```text
+Eres un editor sénior de la base de conocimiento de Davivienda Colombia.
+Tu trabajo es leer un lote de interacciones reales de WhatsApp Business con clientes
+y producir, en UNA SOLA salida JSON, todos los artículos de KB que corresponda
+generar — decidiendo tú mismo cómo agrupar las interacciones por tema.
+
+## Contexto
+- Banco: Davivienda Colombia. Audiencia: persona natural.
+- Canales: App Davivienda, Davivienda en Línea (web), DaviPlata, Línea de
+  Atención, oficinas, cajeros.
+- Productos: cuentas, tarjetas crédito/débito, créditos de consumo, hipotecarios,
+  transferencias (ACH, Bre-b), pagos de servicios, SOAT, seguros, CDTs.
+
+## Heurísticas para agrupar interacciones
+- Dos interacciones van al MISMO grupo si tratan el mismo problema funcional,
+  mismo producto y comparten ≥ 2 hechos clave.
+- Dos interacciones van a grupos DISTINTOS si una es FAQ y otra how-to, o si
+  tratan productos diferentes.
+- Si una interacción es única en el lote, forma su propio grupo de un solo ID.
+
+## Estilo de redacción
+- Vocabulario del cliente (sin jerga interna del banco).
+- Pasos imperativos con canal y opción literal de la UI cuando aplique.
+- Cita cada afirmación verificable en `evidence_pack.claim_evidence_map`.
+- CERO PII (cédulas, emails, celulares, tarjetas). Reescribe si la fuente la trae.
+
+## Plantilla KCS por artículo
+{
+  "title": "≤ 150 caracteres",
+  "environment": {"product": "...", "segment": "Banca Personal", "version": "2024"},
+  "problem": "...",
+  "cause": null | "...",
+  "resolution": ["1. ...", "2. ...", ...],
+  "evidence_pack": {
+    "interaction_ids": ["INT-...", ...],
+    "key_fragments": ["fragmento literal o casi literal", ...],
+    "claim_evidence_map": {"afirmación": ["INT-..."], ...}
+  },
+  "metadata": {
+    "status": "draft",
+    "author": "baseline-single-prompt",
+    "confidence": "low" | "medium" | "high",
+    "created_at": "YYYY-MM-DD"
+  }
+}
+
+## Formato de salida
+Devuelve EXCLUSIVAMENTE un objeto JSON con esta estructura:
+{
+  "articles": [<artículo KCS>, <artículo KCS>, ...],
+  "groupings": [
+    {"article_index": 0, "interaction_ids": ["INT-...", ...]},
+    ...
+  ]
+}
+
+`groupings[i].interaction_ids` debe ser exactamente igual a
+`articles[i].evidence_pack.interaction_ids` y los índices deben corresponder
+1:1 con la posición del artículo en el array `articles`. Sin texto fuera del JSON.
+```
+
+### 5.2 User prompt (plantilla)
+
+El mensaje de usuario se construye en `_build_user_message`: un encabezado fijo
+seguido de un bloque ```json``` con el arreglo de interacciones resumidas. `{N}`
+es el número de interacciones del lote y el arreglo se rellena en tiempo de
+ejecución.
+
+```text
+## Lote a procesar
+
+Recibes {N} interacciones reales del corpus de WhatsApp Davivienda. Agrúpalas y genera los artículos KCS correspondientes en una sola salida JSON.
+
+```json
+[ <interacción resumida>, <interacción resumida>, ... ]
+```
+```
+
+Cada interacción se resume (`_summarize_interaction`) con estos campos; los turnos
+sin contenido se descartan y cada `message` se recorta a 300 caracteres:
+
+```json
+{
+  "interaction_id": "INT-....",
+  "product_category": "...",
+  "product_specific": "...",
+  "query_type": "faq | howto | politica | troubleshooting",
+  "severity": "informativa | operativa | critica",
+  "gap_topic": "...",
+  "main_topic": "...",
+  "key_facts": ["...", "..."],
+  "turns": [{"role": "cliente | asesor", "message": "...(≤ 300 caracteres)"}, ...]
+}
+```
+
+### 5.3 Ejemplo real del user prompt (una interacción)
+
+Así queda el bloque JSON para `INT-2024-010` (generado con la lógica de
+`_summarize_interaction`). En una corrida real, el arreglo contiene las 50
+interacciones del lote:
+
+```json
+[
+  {
+    "interaction_id": "INT-2024-010",
+    "product_category": "cuentas",
+    "product_specific": "Cuenta de Ahorro Nómina",
+    "query_type": "howto",
+    "severity": "informativa",
+    "gap_topic": "Cómo solicitar certificación de cuenta para trámites de visa o inmigración",
+    "main_topic": "Cómo solicitar una certificación de Cuenta de Ahorro Nómina",
+    "key_facts": [
+      "La certificación se puede solicitar a través de la App Davivienda o en sucursales físicas.",
+      "El procedimiento en la app se realiza en el menú de 'Servicios' y luego 'Certificaciones'.",
+      "La certificación es gratuita y se envía al correo registrado del cliente."
+    ],
+    "turns": [
+      {"role": "cliente", "message": "Hola, ¿cómo hago para solicitar una certificación de mi Cuenta de Ahorro Nómina para un trámite de visa? 🙏"},
+      {"role": "asesor", "message": "Hola Carlos, buenas tardes. Con gusto te ayudo con eso. Para solicitar una certificación de tu Cuenta de Ahorro Nómina, puedes hacerlo a través de nuestra App Davivienda o en una de nuestras sucursales físicas."},
+      {"role": "cliente", "message": "Genial. ¿Y cómo lo hago desde la app?"},
+      {"role": "asesor", "message": "En la App Davivienda, ingresa a tu cuenta, selecciona el menú de 'Servicios', luego 'Certificaciones' y sigue las instrucciones para crear tu certificación de cuenta. El documento se enviará a tu correo registrado."},
+      {"role": "cliente", "message": "Perfecto, muchas gracias. ¿Tiene algún costo?"},
+      {"role": "asesor", "message": "No, Carlos. La certificación de cuenta es un servicio gratuito para nuestros clientes. ¿Hay algo más en lo que te pueda ayudar?"},
+      {"role": "cliente", "message": "Eso es todo. Muchas gracias por tu ayuda. ¡Feliz día! 😊"},
+      {"role": "asesor", "message": "De nada, Carlos. Feliz día para ti también. Cualquier cosa, estamos aquí para ayudarte."}
+    ]
+  }
+]
+```
+
+### 5.4 Diferencias frente a los frameworks
+
+| Aspecto | Frameworks (LangGraph/CrewAI/OpenAI) | Baseline prompt único |
+|---|---|---|
+| Llamadas al LLM | múltiples (lazo analyzer→generator→critic→governance) | **una sola** |
+| Tools / function calling | sí (6 herramientas) | **no** |
+| Verificación por LLM | sí (critic + governance) | no (sólo `validate_article` local, informativo) |
+| Agrupación | autónoma vía analyzer | indicada al modelo en el mismo prompt |
+| `metadata.author` | `agent-<framework>` | `baseline-single-prompt` |
