@@ -71,7 +71,7 @@ def main(argv=None) -> int:
         choices=("evaluation", "reserve", "calibration"),
         default="evaluation",
         help="Split de splits.yaml a usar (default evaluation). `reserve` se usa "
-        "para validación de robustez sobre las 37 interacciones reservadas.",
+        "para validación de estabilidad sobre las 37 interacciones reservadas.",
     )
     parser.add_argument(
         "--out-subdir",
@@ -80,7 +80,7 @@ def main(argv=None) -> int:
         metavar="NAME",
         help="Subcarpeta bajo runs/ donde se guardan los resultados "
         "(default `experiment` → runs/experiment/). Usar p. ej. "
-        "`experiment_reserve` para separar la validación de robustez.",
+        "`experiment_reserve` para separar la validación de estabilidad.",
     )
     parser.add_argument("--runs", type=int, default=3, help="Repeticiones (default 3).")
     # NOTA: las ablaciones NO están implementadas — reservado para trabajo futuro.

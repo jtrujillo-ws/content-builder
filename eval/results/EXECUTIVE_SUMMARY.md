@@ -1,6 +1,6 @@
 # Resumen ejecutivo — Comparación de frameworks de agentes
 
-_Generado: 2026-06-01T02:35:02+00:00_
+_Generado: 2026-06-02T11:27:52+00:00_
 
 Comparación empírica de LangGraph, CrewAI y OpenAI Agents SDK para generación de artículos de KB (caso Davivienda). Modelo base idéntico (claude-sonnet-4-6); la única variable es el framework de orquestación.
 
@@ -16,7 +16,7 @@ Comparación empírica de LangGraph, CrewAI y OpenAI Agents SDK para generación
 
 Leyenda: arts=artículos prom., cov%=cobertura interacciones, KCS%=cumplimiento plantilla, ev%=cobertura evidencia, lat=latencia (s), cost$=costo mediano, tools=tool calls prom., fail%=tasa de fallo, LOC=líneas de implementación.
 
-## 2. Validación de robustez — split reserve (37 interacciones × 1 run)
+## 2. Validación de estabilidad — split reserve (37 interacciones × 1 run)
 
 | framework | runs | arts | cov% | KCS% | ev% | lat_med | lat_p90 | cost$ | tools | fail% | LOC |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -26,7 +26,7 @@ Leyenda: arts=artículos prom., cov%=cobertura interacciones, KCS%=cumplimiento 
 
 ## 3. ¿Se mantienen los patrones en la reserva?
 
-Comparación de los 3 frameworks de orquestación entre el estudio principal (50 interacciones × 3 runs) y la validación de robustez (37 interacciones × 1 run). Un cambio de ranking solo se considera **real** si la diferencia entre frameworks supera el **5% relativo en ambos splits**; los flips entre valores casi empatados se marcan como ruido y NO penalizan la robustez.
+Comparación de los 3 frameworks de orquestación entre el estudio principal (50 interacciones × 3 runs) y la validación de estabilidad (37 interacciones × 1 run). Un cambio de ranking solo se considera **real** si la diferencia entre frameworks supera el **5% relativo en ambos splits**; los flips entre valores casi empatados se marcan como ruido y NO penalizan la estabilidad.
 
 | Métrica | Ranking principal | Ranking reserva | Veredicto |
 |---|---|---|---|
@@ -46,8 +46,8 @@ Comparación de los 3 frameworks de orquestación entre el estudio principal (50
 | crewai | +0.0 | +1.3 | +1.3 | -8.226 | -196.3 |
 | openai_agents | +0.0 | +0.2 | -2.0 | -5.827 | -250.0 |
 
-### Veredicto de robustez
+### Veredicto de estabilidad
 
-**✅ Los patrones se mantienen.** 7/7 rankings de métricas se conservan (100%). Los hallazgos del estudio principal son robustos frente al split de reserva.
+**✅ Los patrones se mantienen.** 7/7 rankings de métricas se conservan (100%). Los hallazgos del estudio principal son estables frente al split de reserva.
 
 > Nota metodológica: la reserva tiene 1 run por framework (vs 3 en el principal) y 37 vs 50 interacciones, por lo que su varianza es mayor. Un cambio de ranking en métricas con valores muy cercanos no implica necesariamente un patrón distinto.

@@ -1,6 +1,6 @@
 #!/bin/zsh
 # ---------------------------------------------------------------------------
-# OpenAI Agents — validación de robustez sobre el split de RESERVA (37 inter.),
+# OpenAI Agents — validación de estabilidad sobre el split de RESERVA (37 inter.),
 # 1 run, batch-size 1, cap $200. Salida en runs/experiment_reserve/openai_agents/.
 #
 # LANZAR SOLO cuando el run PRINCIPAL de openai (runs/experiment/) haya

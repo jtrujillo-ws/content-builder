@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Genera el resumen ejecutivo comparando el estudio principal (split evaluation)
-con la validación de robustez (split reserve).
+con la validación de estabilidad (split reserve).
 
 Lee los dos JSON producidos por compute_metrics.py y escribe:
     eval/results/main_table.md       — tabla principal (3 frameworks + 2 baselines)
@@ -86,7 +86,7 @@ def _md_table(report: Dict[str, Any], order: List[str]) -> str:
     return "\n".join(lines)
 
 
-# Métricas para el análisis de robustez: (clave, etiqueta, dirección)
+# Métricas para el análisis de estabilidad: (clave, etiqueta, dirección)
 ROBUST_METRICS = [
     ("kcs", "Cumplimiento KCS (KCS%)", "higher"),
     ("ev", "Cobertura de evidencia (ev%)", "higher"),
@@ -98,7 +98,7 @@ ROBUST_METRICS = [
 ]
 
 
-# Umbral de robustez: un flip de ranking solo cuenta como cambio REAL si la
+# Umbral de estabilidad: un flip de ranking solo cuenta como cambio REAL si la
 # diferencia entre los dos frameworks supera este % relativo en AMBOS splits.
 # Flips entre frameworks separados por menos de esto se consideran empates/ruido.
 ROBUST_THRESHOLD = 0.05  # 5% relativo
@@ -161,12 +161,12 @@ def _robustness_section(main: Dict[str, Any], reserve: Dict[str, Any]) -> str:
     out.append("## 3. ¿Se mantienen los patrones en la reserva?\n")
     out.append(
         "Comparación de los 3 frameworks de orquestación entre el estudio "
-        "principal (50 interacciones × 3 runs) y la validación de robustez "
+        "principal (50 interacciones × 3 runs) y la validación de estabilidad "
         "(37 interacciones × 1 run). Un cambio de ranking solo se considera "
         "**real** si la diferencia entre frameworks supera el "
         f"**{ROBUST_THRESHOLD*100:.0f}% relativo en ambos splits**; los flips "
         "entre valores casi empatados se marcan como ruido y NO penalizan la "
-        "robustez.\n"
+        "estabilidad.\n"
     )
 
     preserved = 0
@@ -229,16 +229,16 @@ def _robustness_section(main: Dict[str, Any], reserve: Dict[str, Any]) -> str:
     if pct >= 75:
         verdict = (f"**✅ Los patrones se mantienen.** {preserved}/{total} rankings "
                    f"de métricas se conservan ({pct:.0f}%). Los hallazgos del estudio "
-                   "principal son robustos frente al split de reserva.")
+                   "principal son estables frente al split de reserva.")
     elif pct >= 50:
-        verdict = (f"**⚠️ Robustez parcial.** {preserved}/{total} rankings se conservan "
+        verdict = (f"**⚠️ Estabilidad parcial.** {preserved}/{total} rankings se conservan "
                    f"({pct:.0f}%). Revisar las métricas marcadas como 'cambia' antes de "
                    "generalizar las conclusiones.")
     else:
         verdict = (f"**❌ Patrones inestables.** Solo {preserved}/{total} rankings se "
                    f"conservan ({pct:.0f}%). Los resultados del estudio principal NO se "
                    "replican en la reserva — interpretar con cautela.")
-    out.append("### Veredicto de robustez\n")
+    out.append("### Veredicto de estabilidad\n")
     out.append(verdict)
     out.append("")
     out.append(
@@ -274,7 +274,7 @@ def main(argv=None) -> int:
         encoding="utf-8",
     )
     (args.out_dir / "reserve_table.md").write_text(
-        f"# Tabla de robustez — split reserve (37 interacciones × 1 run)\n\n{reserve_tbl}\n",
+        f"# Tabla de estabilidad — split reserve (37 interacciones × 1 run)\n\n{reserve_tbl}\n",
         encoding="utf-8",
     )
 
@@ -296,7 +296,7 @@ def main(argv=None) -> int:
         "lat=latencia (s), cost$=costo mediano, tools=tool calls prom., fail%=tasa de "
         "fallo, LOC=líneas de implementación.",
         "",
-        "## 2. Validación de robustez — split reserve (37 interacciones × 1 run)",
+        "## 2. Validación de estabilidad — split reserve (37 interacciones × 1 run)",
         "",
         reserve_tbl,
         "",

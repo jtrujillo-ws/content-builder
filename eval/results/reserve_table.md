@@ -1,4 +1,4 @@
-# Tabla de robustez — split reserve (37 interacciones × 1 run)
+# Tabla de estabilidad — split reserve (37 interacciones × 1 run)
 
 | framework | runs | arts | cov% | KCS% | ev% | lat_med | lat_p90 | cost$ | tools | fail% | LOC |
 |---|---|---|---|---|---|---|---|---|---|---|---|

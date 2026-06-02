@@ -98,7 +98,7 @@ done
 
 Salida: `runs/experiment/<framework>/run_<n>/` + `experiment_summary.json`.
 
-### 3. Validación de robustez — split de reserva (37 IDs, 1 run)
+### 3. Validación de estabilidad — split de reserva (37 IDs, 1 run)
 
 ```bash
 for FW in langgraph crewai openai_agents; do
@@ -171,7 +171,7 @@ Lee `eval/rubrics/human_evaluation_comparative_scored.xlsx` +
 | Presupuesto por lote | timeout 900s (watchdog 930s), max_tool_calls 150, max_cost_usd 2.00 |
 | Tope global por run | `--max-total-cost 200` (obligatorio al lanzar) |
 | Batching | `--batch-size 1` (1 interacción = 1 invocación) |
-| Repeticiones | 3 (principal), 1 (robustez) |
+| Repeticiones | 3 (principal), 1 (estabilidad) |
 
 **Costo/tiempo aproximado** (referencia): cada framework ~\$27/run × 3 runs;
 ~3–5 h por run. Baselines: prompt ~\$0.9/run, heurístico \$0. El estudio

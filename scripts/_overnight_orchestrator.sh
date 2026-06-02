@@ -85,6 +85,6 @@ log "generando resumen ejecutivo..."
   --timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 log "DONE. Entregables en ${RESULTS}/:"
-log "  - EXECUTIVE_SUMMARY.md  (resumen ejecutivo + robustez)"
+log "  - EXECUTIVE_SUMMARY.md  (resumen ejecutivo + estabilidad)"
 log "  - main_table.md / reserve_table.md"
 log "  - main_metrics.json / reserve_metrics.json (+ .txt)"

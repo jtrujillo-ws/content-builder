@@ -123,7 +123,7 @@ def build_anexo_g() -> str:
     out = ["## Anexo G — Tablas completas de resultados\n"]
     out.append("### G.1 Estudio principal (split evaluación)\n")
     out.append(main_tbl)
-    out.append("\n### G.2 Validación de robustez (split reserva)\n")
+    out.append("\n### G.2 Validación de estabilidad (split reserva)\n")
     out.append(res_tbl)
 
     out.append("\n### G.3 Pruebas de Friedman por dimensión humana\n")
@@ -198,7 +198,7 @@ ANEXO_I = """## Anexo I — Cronograma real de ejecución
 | 05-28 | Endurecimiento del runner (max_tool_calls 150, watchdog de timeout, timeout 900 s), upgrade a claude-sonnet-4-6, fix de prefill de CrewAI + caché de embeddings, subset estratificado de 50 y flag `--eval-subset`. |
 | 05-29 | Corridas principales: CrewAI, LangGraph y baselines completan; primer intento de OpenAI Agents aborta por tope de costo por defecto ($20). |
 | 05-30 | Diagnóstico del aborto y relanzamiento de OpenAI Agents con `--max-total-cost 200`. |
-| 05-31 | OpenAI Agents completa 50/50 × 3; validación de robustez (reserva) encadenada; cómputo de métricas, evaluación humana y análisis estadístico. |
+| 05-31 | OpenAI Agents completa 50/50 × 3; validación de estabilidad (reserva) encadenada; cómputo de métricas, evaluación humana y análisis estadístico. |
 """
 
 

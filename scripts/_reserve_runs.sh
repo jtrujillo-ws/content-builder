@@ -1,6 +1,6 @@
 #!/bin/zsh
 # ---------------------------------------------------------------------------
-# Validación de robustez sobre el split de RESERVA (37 interacciones), 1 run
+# Validación de estabilidad sobre el split de RESERVA (37 interacciones), 1 run
 # por framework, batch-size 1, cap $200. Resultados separados del estudio
 # principal en runs/experiment_reserve/ (NO toca runs/experiment/).
 #
@@ -21,7 +21,7 @@ TS=$(date -u +%Y%m%dT%H%M%SZ)
 LOGDIR="runs/experiment_reserve/_logs"
 mkdir -p "$LOGDIR"
 
-echo "[reserve] arrancando validación de robustez (split reserve) ${TS}"
+echo "[reserve] arrancando validación de estabilidad (split reserve) ${TS}"
 
 # Mantener la Mac despierta durante toda la batería de reserva (el caffeinate
 # del run principal muere cuando OpenAI termina ~02:00, pero estos siguen).
