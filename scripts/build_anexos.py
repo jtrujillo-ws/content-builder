@@ -187,22 +187,6 @@ def build_anexo_h() -> str:
 
 
 # ---------------------------------------------------------------------------
-# Anexo I — Cronograma
-# ---------------------------------------------------------------------------
-ANEXO_I = """## Anexo I — Cronograma real de ejecución
-
-| Fecha (2026) | Hito |
-|---|---|
-| 05-26 | Implementación inicial: migración a Python 3.11, prototipos de CrewAI y OpenAI Agents SDK, baselines, scripts de orquestación. |
-| 05-27 | Refactor del runner a invocaciones por lotes (batched). |
-| 05-28 | Endurecimiento del runner (max_tool_calls 150, watchdog de timeout, timeout 900 s), upgrade a claude-sonnet-4-6, fix de prefill de CrewAI + caché de embeddings, subset estratificado de 50 y flag `--eval-subset`. |
-| 05-29 | Corridas principales: CrewAI, LangGraph y baselines completan; primer intento de OpenAI Agents aborta por tope de costo por defecto ($20). |
-| 05-30 | Diagnóstico del aborto y relanzamiento de OpenAI Agents con `--max-total-cost 200`. |
-| 05-31 | OpenAI Agents completa 50/50 × 3; validación de estabilidad (reserva) encadenada; cómputo de métricas, evaluación humana y análisis estadístico. |
-"""
-
-
-# ---------------------------------------------------------------------------
 # Anexo J — Repositorio
 # ---------------------------------------------------------------------------
 ANEXO_J = """## Anexo J — Repositorio
@@ -258,7 +242,6 @@ def main() -> int:
         diagrams, "\n---\n",
         build_anexo_g(), "\n---\n",
         build_anexo_h(), "\n---\n",
-        ANEXO_I, "\n---\n",
         ANEXO_J,
     ]
     OUT.write_text("\n".join(parts), encoding="utf-8")
