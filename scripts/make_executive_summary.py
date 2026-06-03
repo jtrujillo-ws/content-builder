@@ -281,8 +281,6 @@ def main(argv=None) -> int:
     doc = [
         "# Resumen ejecutivo — Comparación de frameworks de agentes",
         "",
-        f"_Generado: {ts}_",
-        "",
         "Comparación empírica de LangGraph, CrewAI y OpenAI Agents SDK para "
         "generación de artículos de KB (caso Davivienda). Modelo base idéntico "
         "(claude-sonnet-4-6); la única variable es el framework de orquestación.",

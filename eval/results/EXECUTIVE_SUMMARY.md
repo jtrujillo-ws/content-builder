@@ -1,7 +1,5 @@
 # Resumen ejecutivo — Comparación de frameworks de agentes
 
-_Generado: 2026-06-02T11:27:52+00:00_
-
 Comparación empírica de LangGraph, CrewAI y OpenAI Agents SDK para generación de artículos de KB (caso Davivienda). Modelo base idéntico (claude-sonnet-4-6); la única variable es el framework de orquestación.
 
 ## 1. Estudio principal — split evaluation (50 interacciones × 3 runs)

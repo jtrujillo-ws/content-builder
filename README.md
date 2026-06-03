@@ -14,7 +14,7 @@ solo prompt).
 > input y generan artículos KB desde cero. No hay KB preexistente que consultar;
 > cada framework decide autónomamente si agrupa interacciones similares.
 
-Para el detalle del proceso, cronología y problemas resueltos, ver
+Para el detalle del proceso y los problemas resueltos, ver
 [`docs/proceso_experimental.md`](docs/proceso_experimental.md).
 
 ---

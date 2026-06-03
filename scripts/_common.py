@@ -199,7 +199,7 @@ def _ensure_std_fds(log: Optional[logging.Logger] = None) -> List[int]:
     """Garantiza que los descriptores estándar (0=stdin, 1=stdout, 2=stderr)
     sean válidos antes de lanzar un subproceso con `mp.spawn`.
 
-    Contexto del bug (openai_agents, run 2026-05-29): tras ~12 lotes el proceso
+    Contexto del bug (openai_agents): tras ~12 lotes el proceso
     padre quedaba con `fd 0` (stdin) inválido. `mp.spawn` re-ejecuta `python` y
     el hijo intenta inicializar `sys.stdin/stdout/stderr` desde los fds 0/1/2
     heredados; si uno está cerrado, el intérprete aborta en el arranque con

@@ -3,7 +3,7 @@
 
 Las secciones "copia literal" (prompts, budget.yaml, tablas, diagramas) se leen
 de sus archivos para garantizar fidelidad; el resto (plantilla KCS, rúbrica,
-tool contract, artículos, cronología, repositorio) se define aquí.
+tool contract, artículos, repositorio) se define aquí.
 """
 from __future__ import annotations
 

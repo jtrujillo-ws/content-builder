@@ -71,7 +71,7 @@ def _valid_article():
             "status": "draft",
             "author": "agent-langgraph",
             "confidence": "high",
-            "created_at": "2026-05-26",
+            "created_at": "2024-02-15",
         },
     }
 
